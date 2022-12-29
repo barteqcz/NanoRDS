@@ -21,4 +21,4 @@ make
 
 Once you compiled the program, use `./micrords` to run it. 
 
-To see available commands list, see [commands list](https://github.com/barteqcz/MicroRDS/blob/main/doc/command_list.md)
+To see available commands list, see [command list](https://github.com/barteqcz/MicroRDS/blob/main/doc/command_list.md)
