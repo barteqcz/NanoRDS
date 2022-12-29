@@ -1,6 +1,6 @@
 ## Mpxgen command list
 
-This is a complete list of commands Mpxgen recognizes. The API is not yet stable.
+This is a complete list of commands MicroRDS uses.
 
 Create the control pipe and enable FIFO control:
 ```
