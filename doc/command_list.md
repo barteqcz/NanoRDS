@@ -1,4 +1,4 @@
-## Mpxgen command list
+## MicroRDS command list
 
 This is a complete list of commands MicroRDS uses.
 
