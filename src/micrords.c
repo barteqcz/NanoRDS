@@ -83,7 +83,7 @@ static void *net_ctl_worker() {
 
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
-		"This is MiniRDS, a lightweight RDS encoder.\n"
+		"This is MicroRDS, a lightweight RDS encoder.\n"
 		"Version %s\n"
 		"\n"
 		"Usage: %s [options]\n"
@@ -126,7 +126,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 }
 
 static void show_version() {
-	printf("MiniRDS version %s\n", VERSION);
+	printf("MicroRDS version %s\n", VERSION);
 }
 
 // check MPX volume level
@@ -142,8 +142,8 @@ int main(int argc, char **argv) {
 	int opt;
 	char control_pipe[51];
 	struct rds_params_t rds_params = {
-		.ps = "MiniRDS",
-		.rt = "MiniRDS: Software RDS encoder",
+		.ps = "MicroRDS",
+		.rt = "MicroRDS: Lightweight software RDS encoder.",
 		.pi = 0x1000
 	};
 	char callsign[5];
