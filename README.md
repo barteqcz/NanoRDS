@@ -4,7 +4,7 @@ MicroRDS is a lightweight, software RDS encoder for Linux.
 
 ### Features
 
-- low-resource
+- low-resource requirements
 - supports PS, PTY, PI, RT, RT+, CT, PTYN
 - supports fifo control, so bash scripts to control RDS can be written
 
