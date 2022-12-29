@@ -8,7 +8,13 @@ MicroRDS is a lightweight, software RDS encoder for Linux.
 - supports PS, PTY, PI, RT, RT+, CT, PTYN
 - supports fifo control, so bash scripts to control RDS can be written
 
-### Compilation
+### Installing dependencies & compilation
+
+on Debian-based & Ubuntu-based distros, run `sudo apt install libao-dev libsamplerate0-dev`
+on Arch-based distros, run `sudo pacman -S libao libsamplerate`
+on Fedora, run `sudo dnf install libao libsamplerate`
+
+and after installing the dependencies, run the following to compile the program:
 
 ```
 git clone https://github.com/barteqcz/MicroRDS
@@ -16,6 +22,7 @@ cd MicroRDS
 cd src
 make
 ```
+
 ### Usage
 
 Once you compiled the program, use `./micrords` to run it. 
