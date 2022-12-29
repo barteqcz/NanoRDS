@@ -365,12 +365,6 @@ exit:
 		pthread_join(control_pipe_thread, NULL);
 	}
 
-	if (port) {
-		fprintf(stderr, "Waiting for net socket thread to shut down.\n");
-		pthread_cond_signal(&net_ctl_cond);
-		pthread_join(net_ctl_thread, NULL);
-	}
-
 	pthread_attr_destroy(&attr);
 
 	fm_mpx_exit();
