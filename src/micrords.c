@@ -176,11 +176,6 @@ int main(int argc, char **argv) {
 	pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t control_pipe_cond;
 
-	/* network control socket */
-	pthread_t net_ctl_thread;
-	pthread_mutex_t net_ctl_mutex = PTHREAD_MUTEX_INITIALIZER;
-	pthread_cond_t net_ctl_cond;
-
 	const char	*short_opt = "m:R:i:s:r:p:T:A:P:"
 #ifdef RBDS
 	"S:"
@@ -350,22 +345,6 @@ done_parsing_opts:
 			}
 		} else {
 			fprintf(stderr, "Failed to open control pipe: %s.\n", control_pipe);
-		}
-	}
-
-	/* ASCII control over network socket */
-	if (port) {
-		if (open_ctl_socket(port, proto) == 0) {
-			fprintf(stderr, "Reading control commands on port %d.\n", port);
-			r = pthread_create(&net_ctl_thread, &attr, net_ctl_worker, NULL);
-			if (r < 0) {
-				fprintf(stderr, "Could not create network control thread.\n");
-				goto exit;
-			} else {
-				fprintf(stderr, "Created network control thread.\n");
-			}
-		} else {
-			fprintf(stderr, "Failed to open port %d.\n", port);
 		}
 	}
 
