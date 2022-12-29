@@ -93,7 +93,7 @@ Program Type Name. Used for broadcasting a more specific format identifier. `PTY
 `PTYN CHR`
 
 #### `RTP`
-Radiotext Plus tagging data. Comma-separated values specifying content type, start offset and length. Format: `<content type 1>,<start 1>,<length 1>,<content type 2>,<start 2>,<length 2>`.
+Radiotext Plus tagging data. Comma-separated values specifying content type, start offset and length. <br> Format: `<content type 1>,<start 1>,<length 1>,<content type 2>,<start 2>,<length 2>`.
 
 `RTP 0,0,0,0,0,0`
 
