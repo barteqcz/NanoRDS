@@ -1,7 +1,7 @@
 # MicroRDS
 
 MicroRDS is a lightweight, software RDS encoder.
-It's a fork from [MiniRDS](https://github.com/Anthony96922/MiniRDS) created by [Anthony96922](https://github.com/Anthony96922).
+It's a fork from [MiniRDS](https://github.com/Anthony96922/MiniRDS) created by [Anthony96922](https://github.com/Anthony96922), and I would like to say many thanks for the great job, to the author!
 
 ### Features
 
