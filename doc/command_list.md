@@ -4,12 +4,12 @@ This is a complete list of commands Mpxgen recognizes. The API is not yet stable
 
 Create the control pipe and enable FIFO control:
 ```
-mkfifo rds_ctl
-./mpxgen --ctl rds_ctl
+mkfifo rds
+./micrords --ctl rds
 ```
 Then you can send “commands” to change PS, RT, TA and PTY:
 ```
-cat > rds_ctl
+cat > rds
 PS MyText
 RT A text to be sent as radiotext
 PTY 10
@@ -91,11 +91,6 @@ Sets the output sampling rate offset in PPM. This can be used to compensate for 
 Program Type Name. Used for broadcasting a more specific format identifier. `PTYN OFF` disables broadcasting the PTYN.
 
 `PTYN CHR`
-
-### RadioText Plus
-Mpxgen implements RT+ to allow some radios to display indivdual MP3-like metadata tags like artist and song titles from within RT.
-
-For more information, see [EBU Technical Review: RadioText Plus](https://tech.ebu.ch/docs/techreview/trev_307-radiotext.pdf)
 
 #### `RTP`
 Radiotext Plus tagging data. Comma-separated values specifying content type, start offset and length. Format: `<content type 1>,<start 1>,<length 1>,<content type 2>,<start 2>,<length 2>`.
