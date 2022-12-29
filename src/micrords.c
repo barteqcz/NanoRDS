@@ -70,16 +70,6 @@ static void *control_pipe_worker() {
 	pthread_exit(NULL);
 }
 
-static void *net_ctl_worker() {
-	while (!stop_rds) {
-		poll_ctl_socket();
-		sleep(1);
-	}
-
-	close_ctl_socket();
-	pthread_exit(NULL);
-}
-
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
 		"This is MicroRDS, a lightweight RDS encoder.\n"
