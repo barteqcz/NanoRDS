@@ -1,7 +1,6 @@
 # MicroRDS
 
 MicroRDS is a lightweight, software RDS encoder for Linux.
-It's a fork from [MiniRDS](https://github.com/Anthony96922/MiniRDS) created by [Anthony96922](https://github.com/Anthony96922), and I would like to say many thanks for the great job, to the author!
 
 ### Features
 
@@ -22,3 +21,7 @@ make
 Once you compiled the program, use `./micrords` to run it. 
 
 To see available commands list, see [command list](https://github.com/barteqcz/MicroRDS/blob/main/doc/command_list.md)
+
+### Credits
+
+MicroRDS is a fork from [MiniRDS](https://github.com/Anthony96922/MiniRDS) created by [Anthony96922](https://github.com/Anthony96922), and I would like to say many thanks for the great job, to the author!
