@@ -270,8 +270,6 @@ done_parsing_opts:
 	// Initialize pthread stuff
 	pthread_mutex_init(&control_pipe_mutex, NULL);
 	pthread_cond_init(&control_pipe_cond, NULL);
-	pthread_mutex_init(&net_ctl_mutex, NULL);
-	pthread_cond_init(&net_ctl_cond, NULL);
 	pthread_attr_init(&attr);
 
 	// Setup buffers
