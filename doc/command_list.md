@@ -75,7 +75,7 @@ Set the Program Type. Used to identify the format the station is broadcasting. V
 #### `MPX`
 Set volumes in percent modulation for individual MPX subcarrier signals.
 
-`MPX 9,9,9,9,9`
+`MPX 9,9`
 
 #### `VOL`
 Set the output volume in percent.
