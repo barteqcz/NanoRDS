@@ -22,12 +22,6 @@ cd MicroRDS
 cd src
 make
 ```
-to update the program in the future
-
-```
-cd MicroRDS
-git pull
-```
 
 ### Usage
 
