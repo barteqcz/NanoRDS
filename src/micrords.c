@@ -72,10 +72,11 @@ static void *control_pipe_worker() {
 
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
-		"This is MicroRDS, a lightweight RDS encoder.\n"
-		"Version %s\n"
+		"This is MicroRDS, a lightweight RDS encoder."
 		"\n"
-		"Usage: %s [options]\n"
+		"\n"
+		"Usage: %s [options]"
+		"\n"
 		"\n"
 		"    -m,--volume       Output volume\n"
 		"\n"
@@ -104,7 +105,6 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -C,--ctl          FIFO control pipe\n"
 		"\n"
 		"    -h,--help         Show this help text and exit\n"
-		"    -v,--version      Show version and exit\n"
 		"\n",
 		VERSION,
 		name,
@@ -187,7 +187,6 @@ int main(int argc, char **argv) {
 		{"ctl",		required_argument, NULL, 'C'},
 
 		{"help",	no_argument, NULL, 'h'},
-		{"version",	no_argument, NULL, 'v'},
 		{ 0,		0,		0,	0 }
 	};
 
@@ -248,10 +247,6 @@ keep_parsing_opts:
 		case 'C': //ctl
 			strncpy(control_pipe, optarg, 50);
 			break;
-
-		case 'v': // version
-			show_version();
-			return 0;
 
 		case 'h': //help
 		case '?':
