@@ -132,8 +132,8 @@ int main(int argc, char **argv) {
 	int opt;
 	char control_pipe[51];
 	struct rds_params_t rds_params = {
-		.ps = "MiniRDS",
-		.rt = "MiniRDS: Software RDS encoder",
+		.ps = "MicroRDS",
+		.rt = "MiniRDS: A lightweight RDS encoder for Linux",
 		.pi = 0x1000
 	};
 	char callsign[5];
