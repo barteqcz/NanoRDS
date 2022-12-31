@@ -26,6 +26,7 @@
 #include "fm_mpx.h"
 #include "control_pipe.h"
 #include "resampler.h"
+#include "net.h"
 #include "lib.h"
 
 static uint8_t stop_rds;
@@ -72,18 +73,17 @@ static void *control_pipe_worker() {
 
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
-		"This is MicroRDS, a lightweight RDS encoder."
+		"This is MicroRDS, a lightweight RDS encoder for Linux.\n"
+		"Version %s\n"
 		"\n"
-		"\n"
-		"Usage: %s [options]"
-		"\n"
+		"Usage: %s [options]\n"
 		"\n"
 		"    -m,--volume       Output volume\n"
 		"\n"
 		"    -i,--pi           Program Identification code\n"
 		"                        [default: %04X]\n"
 		"    -s,--ps           Program Service name\n"
-		"                        [default: "%s"]\n"
+		"                        [default: \"%s\"]\n"
 		"    -r,--rt           Radio Text\n"
 		"                        [default: \"%s\"]\n"
 		"    -p,--pty          Program Type\n"
@@ -105,12 +105,18 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -C,--ctl          FIFO control pipe\n"
 		"\n"
 		"    -h,--help         Show this help text and exit\n"
+		"    -v,--version      Show version and exit\n"
 		"\n",
+		VERSION,
 		name,
 		def_params.pi, def_params.ps,
 		def_params.rt, def_params.pty,
 		def_params.tp
 	);
+}
+
+static void show_version() {
+	printf("MicroRDS version %s\n", VERSION);
 }
 
 // check MPX volume level
@@ -126,8 +132,8 @@ int main(int argc, char **argv) {
 	int opt;
 	char control_pipe[51];
 	struct rds_params_t rds_params = {
-		.ps = "MicroRDS",
-		.rt = "MicroRDS: A lightweight software RDS encoder for Linux.",
+		.ps = "MiniRDS",
+		.rt = "MiniRDS: Software RDS encoder",
 		.pi = 0x1000
 	};
 	char callsign[5];
@@ -140,6 +146,9 @@ int main(int argc, char **argv) {
 	float *mpx_buffer;
 	float *out_buffer;
 	char *dev_out;
+
+	uint16_t port = 0;
+	uint8_t proto = 1;
 
 	int8_t r;
 	size_t frames;
@@ -182,6 +191,7 @@ int main(int argc, char **argv) {
 		{"ctl",		required_argument, NULL, 'C'},
 
 		{"help",	no_argument, NULL, 'h'},
+		{"version",	no_argument, NULL, 'v'},
 		{ 0,		0,		0,	0 }
 	};
 
@@ -242,6 +252,10 @@ keep_parsing_opts:
 		case 'C': //ctl
 			strncpy(control_pipe, optarg, 50);
 			break;
+
+		case 'v': // version
+			show_version();
+			return 0;
 
 		case 'h': //help
 		case '?':
