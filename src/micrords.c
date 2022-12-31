@@ -106,16 +106,11 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"\n"
 		"    -h,--help         Show this help text and exit\n"
 		"\n",
-		VERSION,
 		name,
 		def_params.pi, def_params.ps,
 		def_params.rt, def_params.pty,
 		def_params.tp
 	);
-}
-
-static void show_version() {
-	printf("MicroRDS version %s\n", VERSION);
 }
 
 // check MPX volume level
