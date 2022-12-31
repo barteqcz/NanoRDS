@@ -2,12 +2,9 @@
 # name of executable
 name = micrords
 
-# version
-VERSION=1.0
-
 # NRSC RBDS (FCC)
 # Uncomment for NRSC LF/MF AF coding and PTY list
-RBDS = 1
+RBDS = 0
 
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -std=c18
