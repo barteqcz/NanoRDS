@@ -83,7 +83,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -i,--pi           Program Identification code\n"
 		"                        [default: %04X]\n"
 		"    -s,--ps           Program Service name\n"
-		"                        [default: \"%s\"]\n"
+		"                        [default: "%s"]\n"
 		"    -r,--rt           Radio Text\n"
 		"                        [default: \"%s\"]\n"
 		"    -p,--pty          Program Type\n"
