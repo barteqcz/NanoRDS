@@ -20,7 +20,7 @@ TA OFF
 ```
 Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored. `TA ON` switches the Traffic Announcement flag to *on*, and any other value switches it to *off*.
 
-### Commands
+### FIFO Commands
 
 #### `PI`
 Sets the PI code. This takes 4 hexadecimal digits.
