@@ -146,9 +146,6 @@ int main(int argc, char **argv) {
 	float *out_buffer;
 	char *dev_out;
 
-	uint16_t port = 0;
-	uint8_t proto = 1;
-
 	int8_t r;
 	size_t frames;
 
