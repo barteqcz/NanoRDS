@@ -62,7 +62,6 @@ static void *control_pipe_worker() {
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
 		"This is MicroRDS, a lightweight RDS encoder for Linux.\n"
-		"Version %s\n"
 		"\n"
 		"Usage: %s [options]\n"
 		"\n"
@@ -93,17 +92,12 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -C,--ctl          FIFO control pipe\n"
 		"\n"
 		"    -h,--help         Show this help text and exit\n"
-		"    -v,--version      Show version and exit\n"
 		"\n",
-		VERSION,
 		name,
 		def_params.pi, def_params.ps,
 		def_params.rt, def_params.pty,
 		def_params.tp
 	);
-}
-static void show_version() {
-	printf("MicroRDS version %s\n", VERSION);
 }
 // check MPX volume level
 static uint8_t check_mpx_vol(uint8_t volume) {
@@ -166,8 +160,6 @@ int main(int argc, char **argv) {
 #endif
 		{"ctl",		required_argument, NULL, 'C'},
 		{"help",	no_argument, NULL, 'h'},
-		{"version",	no_argument, NULL, 'v'},
-		{ 0,		0,		0,	0 }
 	};
 	memset(control_pipe, 0, 51);
 	memset(callsign, 0, 5);
