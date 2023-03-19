@@ -25,7 +25,6 @@
 #include "control_pipe.h"
 #include "resampler.h"
 #include "lib.h"
-
 static uint8_t stop_rds;
 static void stop() {
 	stop_rds = 1;
@@ -61,20 +60,22 @@ static void *control_pipe_worker() {
 }
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
-		"Available options:\n"
+		"This is MicroRDS, a lightweight RDS encoder for Linux.\n"
+		"\n"
+		"Usage: %s [options]\n"
 		"\n"
 		"    -m,--volume       Output volume\n"
 		"\n"
 		"    -i,--pi           Program Identification code\n"
-		"\n"
+		"                        [default: %04X]\n"
 		"    -s,--ps           Program Service name\n"
-		"\n"
+		"                        [default: \"%s\"]\n"
 		"    -r,--rt           Radio Text\n"
-		"\n"
+		"                        [default: \"%s\"]\n"
 		"    -p,--pty          Program Type\n"
-		"\n"
+		"                        [default: %u]\n"
 		"    -T,--tp           Traffic Program\n"
-		"\n"
+		"                        [default: %u]\n"
 #ifdef RBDS
 		"    -A,--af           Alternative Frequency (FM/MF)\n"
 #else
@@ -204,6 +205,9 @@ keep_parsing_opts:
 		case 'C': //ctl
 			strncpy(control_pipe, optarg, 50);
 			break;
+		case 'v': // version
+			show_version();
+			return 0;
 		case 'h': //help
 		case '?':
 		default:
