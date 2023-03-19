@@ -186,7 +186,6 @@ int main(int argc, char **argv) {
 		{"ctl",		required_argument, NULL, 'C'},
 
 		{"help",	no_argument, NULL, 'h'},
-		{"version",	no_argument, NULL, 'v'},
 		{ 0,		0,		0,	0 }
 	};
 
@@ -247,10 +246,6 @@ keep_parsing_opts:
 		case 'C': //ctl
 			strncpy(control_pipe, optarg, 50);
 			break;
-
-		case 'v': // version
-			show_version();
-			return 0;
 
 		case 'h': //help
 		case '?':
