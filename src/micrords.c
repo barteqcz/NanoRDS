@@ -68,15 +68,10 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -m,--volume       Output volume\n"
 		"\n"
 		"    -i,--pi           Program Identification code\n"
-		"                        [default: %04X]\n"
 		"    -s,--ps           Program Service name\n"
-		"                        [default: \"%s\"]\n"
 		"    -r,--rt           Radio Text\n"
-		"                        [default: \"%s\"]\n"
 		"    -p,--pty          Program Type\n"
-		"                        [default: %u]\n"
 		"    -T,--tp           Traffic Program\n"
-		"                        [default: %u]\n"
 #ifdef RBDS
 		"    -A,--af           Alternative Frequency (FM/MF)\n"
 #else
