@@ -17,7 +17,7 @@ on Fedora, run `sudo dnf install libao libsamplerate` <br>
 and after installing the dependencies, run the following to compile the program:
 
 ```
-git clone https://github.com/barteqcz/MicroRDS
+git clone https://github.com/barteqcz/MicroRDS.git
 cd MicroRDS
 cd src
 make
