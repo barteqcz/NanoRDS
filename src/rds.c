@@ -168,37 +168,63 @@ static void get_rds_oda_group(uint16_t *blocks) {
 }
 
 /* Generates a CT (clock time) group if the minute has just changed
+   Returns 1 if the CT group was generated, 0 otherwise
+*/
+int get_rds_ct_group(uint16_t *blocks) {
+    static int latest_minutes = -1;
+
+    // Check time
+    time_t now;
+    struct tm *utc;
  * Returns 1 if the CT group was generated, 0 otherwise
  */
 static uint8_t get_rds_ct_group(uint16_t *blocks) {
 	static uint8_t latest_minutes;
 	struct tm utc;
 
+    now = time (NULL);
+    utc = gmtime (&now);
 	// Check time
 	time_t now = time(NULL);
 	memcpy(&utc, gmtime(&now), sizeof(struct tm));
 
+    if(utc->tm_min != latest_minutes) {
+        // Generate CT group
+        latest_minutes = utc->tm_min;
 	if (utc.tm_min != latest_minutes) {
 		// Generate CT group
 		latest_minutes = utc.tm_min;
 
+        int l = utc->tm_mon <= 1 ? 1 : 0;
+        int mjd = 14956 + utc->tm_mday +
+                  (int)((utc->tm_year - l) * 365.25) +
+                  (int)((utc->tm_mon + 2 + l*12) * 30.6001);
 		uint8_t l = utc.tm_mon <= 1 ? 1 : 0;
 		uint32_t mjd = 14956 + utc.tm_mday +
 			(uint32_t)((utc.tm_year - l) * 365.25f) +
 			(uint32_t)((utc.tm_mon + 2 + l*12) * 30.6001f);
 
+        blocks[1] = 0x4400 | (mjd>>15);
+        blocks[2] = (mjd<<1) | (utc->tm_hour>>4);
+        blocks[3] = (utc->tm_hour & 0xF)<<12 | utc->tm_min<<6;
 		blocks[1] |= 4 << 12 | (mjd>>15);
 		blocks[2] = (mjd<<1) | (utc.tm_hour>>4);
 		blocks[3] = (utc.tm_hour & 0xF)<<12 | utc.tm_min<<6;
 
+        utc = localtime(&now);
 		/* tm_gmtoff doesn't exist in POSIX but __tm_gmtoff does */
 		int16_t offset = utc.__tm_gmtoff / (30 * 60);
 		blocks[3] |= abs(offset) & INT8_L5;
 		if (offset < 0) blocks[3] |= 1 << 5;
 
+        int offset = utc->__tm_gmtoff / (30 * 60);
+        blocks[3] |= abs(offset);
+        if(offset < 0) blocks[3] |= 0x20;
 		return 1;
 	}
 
+        return 1;
+    } else return 0;
 	return 0;
 }
 
