@@ -61,7 +61,7 @@ static void *control_pipe_worker() {
 }
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
-		"Usage: %s [options]\n"
+		"Available options:\n"
 		"\n"
 		"    -m,--volume       Output volume\n"
 		"\n"
