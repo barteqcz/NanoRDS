@@ -206,9 +206,6 @@ keep_parsing_opts:
 		case 'C': //ctl
 			strncpy(control_pipe, optarg, 50);
 			break;
-		case 'v': // version
-			show_version();
-			return 0;
 		case 'h': //help
 		case '?':
 		default:
