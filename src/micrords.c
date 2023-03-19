@@ -73,7 +73,6 @@ static void *control_pipe_worker() {
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
 		"This is MicroRDS, a lightweight RDS encoder for Linux.\n"
-		"Version %s\n"
 		"\n"
 		"Usage: %s [options]\n"
 		"\n"
