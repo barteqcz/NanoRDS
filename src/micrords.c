@@ -1,4 +1,4 @@
-*
+/*
  * mpxgen - FM multiplex encoder with Stereo and RDS
  * Copyright (C) 2019 Anthony96922
  *
