@@ -79,6 +79,8 @@ static void show_help() {
 #endif
 		"    -C, --ctl          FIFO control pipe\n"
 		"    -h, --help         Show this help text and exit\n"
+		"\n"
+		'Example usage: ./micrords --ps "TEST" --rt "This is a test broadcast!" --pi "2FFF"'
 		"\n");
 	
 }
