@@ -80,8 +80,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -C,--ctl          FIFO control pipe\n"
 		"    -h,--help         Show this help text and exit\n"
 		"\n");
-	name;
-
+	
 }
 // check MPX volume level
 static uint8_t check_mpx_vol(uint8_t volume) {
