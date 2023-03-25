@@ -1,26 +1,17 @@
-## MicroRDS command list
+### MicroRDS FIFO command list
 
-This is a complete list of commands MicroRDS uses.
+This is a complete list of commands MicroRDS handles via FIFO.
 
 Create the control pipe and enable FIFO control:
 ```
 mkfifo rds
 ./micrords --ctl rds
 ```
-Then you can send “commands” to change PS, RT, TA and PTY:
-```
-cat > rds
-PS MyText
-RT A text to be sent as radiotext
-PTY 10
-TA ON
-PS OtherTxt
-TA OFF
-...
-```
+Then you can send the commands to change particular elements of the RDS.
+
 Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored. `TA ON` switches the Traffic Announcement flag to *on*, and any other value switches it to *off*.
 
-### FIFO Commands
+## Commands
 
 #### `PI`
 Sets the PI code. This takes 4 hexadecimal digits.
