@@ -58,7 +58,7 @@ static void *control_pipe_worker() {
 	close_control_pipe();
 	pthread_exit(NULL);
 }
-static void show_help {
+static void show_help() {
 	printf(
 		"Usage: ./micrords [options]\n"
 		"\n"
