@@ -60,25 +60,25 @@ static void *control_pipe_worker() {
 }
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
-		"Usage: %s [options]\n"
+		"Usage: ./micrords [options]\n"
 		"\n"
-		"    -m,--volume       Output volume\n"
-		"    -i,--pi           Program Identification code\n"
-		"    -s,--ps           Program Service name\n"
-		"    -r,--rt           Radio Text\n"
-		"    -p,--pty          Program Type\n"
-		"    -T,--tp           Traffic Program\n"
+		"    -m, --volume       Output volume\n"
+		"    -i, --pi           Program Identification code\n"
+		"    -s, --ps           Program Service name\n"
+		"    -r, --rt           Radio Text\n"
+		"    -p, --pty          Program Type\n"
+		"    -T, --tp           Traffic Program\n"
 #ifdef RBDS
-		"    -A,--af           Alternative Frequency [FM/MF]\n"
+		"    -A, --af           Alternative Frequency [FM/MF]\n"
 #else
-		"    -A,--af           Alternative Frequency [FM/LF/MF] (more than one AF may be passed)\n"
+		"    -A, --af           Alternative Frequency [FM/LF/MF] (more than one AF may be passed)\n"
 #endif
-		"    -P,--ptyn         Program Type Name\n"
+		"    -P, --ptyn         Program Type Name\n"
 #ifdef RBDS
-		"    -S,--callsign     FCC callsign to calculate the PI code from (overrides -i,--pi)\n"
+		"    -S, --callsign     FCC callsign to calculate the PI code from (overrides -i,--pi)\n"
 #endif
-		"    -C,--ctl          FIFO control pipe\n"
-		"    -h,--help         Show this help text and exit\n"
+		"    -C, --ctl          FIFO control pipe\n"
+		"    -h, --help         Show this help text and exit\n"
 		"\n");
 	
 }
