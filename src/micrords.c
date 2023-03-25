@@ -123,11 +123,11 @@ int main(int argc, char **argv) {
 	pthread_t control_pipe_thread;
 	pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t control_pipe_cond;
-	const char	*short_opt = "m:R:i:s:r:p:T:A:P:"
+	const char	*short_opt = "m:R:i:s:r:p:t:a:P:"
 #ifdef RBDS
 	"S:"
 #endif
-	"C:hv";
+	"c:h";
 	struct option	long_opt[] =
 	{
 		{"volume",	required_argument, NULL, 'm'},
@@ -136,13 +136,13 @@ int main(int argc, char **argv) {
 		{"ps",		required_argument, NULL, 's'},
 		{"rt",		required_argument, NULL, 'r'},
 		{"pty",		required_argument, NULL, 'p'},
-		{"tp",		required_argument, NULL, 'T'},
-		{"af",		required_argument, NULL, 'A'},
+		{"tp",		required_argument, NULL, 't'},
+		{"af",		required_argument, NULL, 'a'},
 		{"ptyn",	required_argument, NULL, 'P'},
 #ifdef RBDS
 		{"callsign",	required_argument, NULL, 'S'},
 #endif
-		{"ctl",		required_argument, NULL, 'C'},
+		{"ctl",		required_argument, NULL, 'c'},
 		{"help",	no_argument, NULL, 'h'},
 	};
 	memset(control_pipe, 0, 51);
