@@ -65,34 +65,22 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"Usage: %s [options]\n"
 		"\n"
 		"    -m,--volume       Output volume\n"
-		"\n"
 		"    -i,--pi           Program Identification code\n"
-		"\n"
 		"    -s,--ps           Program Service name\n"
-		"\n"
 		"    -r,--rt           Radio Text\n"
-		"\n"
 		"    -p,--pty          Program Type\n"
-		"\n"
 		"    -T,--tp           Traffic Program\n"
-		"\n"
 #ifdef RBDS
 		"    -A,--af           Alternative Frequency [FM/MF]\n"
-		"\n"
 #else
 		"    -A,--af           Alternative Frequency [FM/LF/MF] (more than one AF may be passed)\n"
-		"\n"
 #endif
 		"    -P,--ptyn         Program Type Name\n"
-		"\n"
 #ifdef RBDS
 		"    -S,--callsign     FCC callsign to calculate the PI code from (overrides -i,--pi)\n"
-		"\n"
 #endif
 		"    -C,--ctl          FIFO control pipe\n"
-		"\n"
 		"    -h,--help         Show this help text and exit\n"
-		"\n",
 		name,
 		def_params.pi, def_params.ps,
 		def_params.rt, def_params.pty,
