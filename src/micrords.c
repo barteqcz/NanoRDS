@@ -60,8 +60,6 @@ static void *control_pipe_worker() {
 }
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
-		"This is MicroRDS, a lightweight RDS encoder for Linux.\n"
-		"\n"
 		"Usage: %s [options]\n"
 		"\n"
 		"    -m,--volume       Output volume\n"
@@ -80,7 +78,8 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		"    -S,--callsign     FCC callsign to calculate the PI code from (overrides -i,--pi)\n"
 #endif
 		"    -C,--ctl          FIFO control pipe\n"
-		"    -h,--help         Show this help text and exit\n");
+		"    -h,--help         Show this help text and exit\n"
+		"\n");
 	name;
 
 }
