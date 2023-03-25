@@ -2,9 +2,11 @@
 # name of executable
 name = micrords
 
-# NRSC RBDS (FCC)
-# Uncomment for NRSC LF/MF AF coding and PTY list
+# Set to 1 to enable RBDS, set to 0 to disable it
 RBDS = 0
+
+# Set to 1 to enable Stereo encoder, set to 0 to disable it.
+STEREO = 1
 
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -std=c18
@@ -17,6 +19,10 @@ libs = -lm -lsamplerate -lpthread -lao
 
 ifeq ($(RBDS), 1)
 	CFLAGS += -DRBDS
+endif
+
+ifeq ($(STEREO), 1)
+	CFLAGS += -DSTEREO
 endif
 
 ifeq ($(CONTROL_PIPE_MESSAGES), 1)
