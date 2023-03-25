@@ -27,11 +27,7 @@
 
 #define OUTPUT_SAMPLE_RATE	192000
 
-#ifdef RDS2
-#define NUM_SUBCARRIERS		5
-#else
 #define NUM_SUBCARRIERS		1
-#endif
 
 extern void fm_mpx_init(uint32_t sample_rate);
 extern void fm_rds_get_frames(float *outbuf, size_t num_frames);
