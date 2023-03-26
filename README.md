@@ -40,4 +40,4 @@ To see available FIFO commands list, see [FIFO command list](https://github.com/
 To see available program-built-in commands, run `./micrords --help`
 ## Credits
 
-MicroRDS is a fork of [MiniRDS](https://github.com/Anthony96922/MiniRDS) created by [Anthony96922](https://github.com/Anthony96922), and I would like to say many thanks for the great job, to the author!
+MicroRDS is a fork of [MiniRDS](https://github.com/Anthony96922/MiniRDS) created by [Anthony96922](https://github.com/Anthony96922), and I would like to thank the author for the wonderful job!
