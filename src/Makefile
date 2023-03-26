@@ -3,10 +3,10 @@ name = micrords
 
 # change to "0" to disable Stereo encoder
 # (don't forget to run "make clean" first)
-STEREO = 0
+STEREO = 1
 
-# NRSC RBDS (FCC)
-# Uncomment for NRSC LF/MF AF coding and PTY list
+# change to "1" to enable RBDS
+# (don't forget to run "make clean" first)
 RBDS = 0
 
 CC = gcc
