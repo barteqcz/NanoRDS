@@ -10,7 +10,7 @@ MicroRDS is a lightweight, software RDS encoder for Linux.
 - supports PS, PTY, PI, RT, RT+, CT, PTYN
 - supports FIFO control, so scripts in Bash, Python, etc. to control RDS can be written.
 
-# Installation
+## Installation
 
 ### Dependencies
 on Debian-based & Ubuntu-based distros, run `sudo apt install libao-dev libsamplerate0-dev` <br>
@@ -31,7 +31,7 @@ Stereo encoder is enabled, but RDBS is disabled by default.
 
 Go to the `src` folder, and simply run `make`
 
-# Usage
+## Usage
 
 Once you compiled the program, use `./micrords` to run it. 
 
