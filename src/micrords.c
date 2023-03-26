@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
 	pthread_t control_pipe_thread;
 	pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t control_pipe_cond;
-	const char	*short_opt = "m:R:i:s:r:p:t:a:P:"
+	const char	*short_opt = "m:i:s:r:p:t:a:P:"
 #ifdef RBDS
 	"S:"
 #endif
@@ -131,7 +131,6 @@ int main(int argc, char **argv) {
 	struct option	long_opt[] =
 	{
 		{"volume",	required_argument, NULL, 'm'},
-		{"rds",		required_argument, NULL, 'R'},
 		{"pi",		required_argument, NULL, 'i'},
 		{"ps",		required_argument, NULL, 's'},
 		{"rt",		required_argument, NULL, 'r'},
