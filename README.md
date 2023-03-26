@@ -22,7 +22,8 @@ git clone https://github.com/barteqcz/MicroRDS.git
 ```
 ### Tweaking the features
 
-In case you want the program to transmit pilot, and broadcast Stereo, or you want it to use RBDS, take a look into the *Makefile* file. There you will find descriptions.
+In case you want the program to transmit pilot, and broadcast Stereo, or you want it to use RBDS, take a look into the *Makefile* file. There you will find descriptions.<br>
+Stereo encoder is enabled, but RDBS is disabled by default.
 
 ### Compilation
 
