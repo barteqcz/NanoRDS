@@ -17,7 +17,6 @@
  */
 
 #include "common.h"
-
 #include "rds.h"
 #include "fm_mpx.h"
 #include "osc.h"
@@ -57,11 +56,10 @@ void fm_mpx_init(uint32_t sample_rate) {
 	/* initialize the subcarrier oscillators */
 	#ifdef STEREO
 	osc_init(&osc_19k, sample_rate, 19000.0f);
-	osc_init(&osc_57k, sample_rate, 57000.0f);
 	#else
-	osc_init(&osc_19k, sample_rate, 00000.0f);
-	osc_init(&osc_57k, sample_rate, 57000.0f);
+	osc_init(&osc_19k, sample_rate, 0.0f);
 	#endif
+	osc_init(&osc_57k, sample_rate, 57000.0f);
 }
 
 void fm_rds_get_frames(float *outbuf, size_t num_frames) {
