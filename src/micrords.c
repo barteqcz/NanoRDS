@@ -227,8 +227,8 @@ keep_parsing_opts:
 		case 'h': //help
 		case '?':
 		default:
-			printf("Invalid command.\n")
-                        printf("\n")
+			printf("Invalid option.\n");
+                        printf("\n");
                         show_help(argv[0], rds_params);
 			return 1;
 	}
