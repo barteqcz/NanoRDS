@@ -2,7 +2,7 @@
 
 MicroRDS is a lightweight, software RDS encoder for Linux.
 
-![MicroRDS](/doc/MicroRDS.jg)
+![MicroRDS](/doc/MicroRDS.g)
 
 ### Features
 
