@@ -1,10 +1,6 @@
 # name of executable
 name = micrords
 
-# change to "0" to disable Stereo encoder
-# (don't forget to run "make clean" first)
-STEREO = 1
-
 # change to "1" to enable RBDS
 # (don't forget to run "make clean" first)
 RBDS = 0
@@ -15,11 +11,6 @@ CFLAGS = -Wall -Wextra -pedantic -O2 -std=c18
 obj = micrords.o waveforms.o rds.o fm_mpx.o control_pipe.o osc.o \
 	resampler.o modulator.o lib.o ascii_cmd.o
 libs = -lm -lsamplerate -lpthread -lao
-
-ifeq ($(STEREO), 1)
-	CFLAGS += -DSTEREO
-	obj += fm_mpx.o
-endif
 
 ifeq ($(RBDS), 1)
 	CFLAGS += -DRBDS
