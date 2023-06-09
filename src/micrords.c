@@ -3,7 +3,6 @@
 #include <getopt.h>
 #include <pthread.h>
 #include <ao/ao.h>
-
 #include "rds.h"
 #include "fm_mpx.h"
 #include "control_pipe.h"
@@ -63,9 +62,9 @@ static void show_help() {
 		"    -p, --pty          Program Type\n"
 		"    -t, --tp           Traffic Program\n"
 #ifdef RBDS
-		"    -A, --af           Alternative Frequencies (FM/MF)\n"
+		"    -a, --af           Alternative Frequencies (FM/MF)\n"
 #else
-		"    -A, --af           Alternative Frequencies (FM/LF/MF)\n"
+		"    -a, --af           Alternative Frequencies (FM/LF/MF)\n"
 #endif
 		"    -P, --ptyn         Program Type Name\n"
 #ifdef RBDS
@@ -138,7 +137,7 @@ int main(int argc, char **argv) {
 		{"rt",		required_argument, NULL, 'r'},
 		{"pty",		required_argument, NULL, 'p'},
 		{"tp",		required_argument, NULL, 't'},
-		{"af",		required_argument, NULL, 'A'},
+		{"af",		required_argument, NULL, 'a'},
 		{"ptyn",	required_argument, NULL, 'P'},
 #ifdef RBDS
 		{"callsign",	required_argument, NULL, 'S'},
