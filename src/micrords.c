@@ -182,11 +182,11 @@ keep_parsing_opts:
 			rds_params.pty = strtoul(optarg, NULL, 10);
 			break;
 
-		case 'T': //tp
+		case 't': //tp
 			rds_params.tp = strtoul(optarg, NULL, 10);
 			break;
 
-		case 'A': //af
+		case 'a': //af
 			if (add_rds_af(&rds_params.af, strtof(optarg, NULL)) == 1) return 1;
 			break;
 
@@ -201,7 +201,7 @@ keep_parsing_opts:
 			break;
 #endif
 
-		case 'C': //ctl
+		case 'c': //ctl
 			strncpy(control_pipe, optarg, 50);
 			break;
 
