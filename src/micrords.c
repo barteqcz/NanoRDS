@@ -61,7 +61,7 @@ static void show_help() {
 		"    -s, --ps           Program Service name\n"
 		"    -r, --rt           Radio Text\n"
 		"    -p, --pty          Program Type\n"
-		"    -T, --tp           Traffic Program\n"
+		"    -t, --tp           Traffic Program\n"
 #ifdef RBDS
 		"    -A, --af           Alternative Frequencies (FM/MF)\n"
 #else
@@ -71,7 +71,7 @@ static void show_help() {
 #ifdef RBDS
 		"    -S, --callsign     FCC callsign to calculate the PI code from. It overrides PI set via -i or --pi\n"
 #endif
-		"    -C, --ctl          FIFO control pipe\n"
+		"    -c, --ctl          FIFO control pipe\n"
 		"    -h, --help         Show this help text and exit\n"
         "\n"
 	);
@@ -137,13 +137,13 @@ int main(int argc, char **argv) {
 		{"ps",		required_argument, NULL, 's'},
 		{"rt",		required_argument, NULL, 'r'},
 		{"pty",		required_argument, NULL, 'p'},
-		{"tp",		required_argument, NULL, 'T'},
+		{"tp",		required_argument, NULL, 't'},
 		{"af",		required_argument, NULL, 'A'},
 		{"ptyn",	required_argument, NULL, 'P'},
 #ifdef RBDS
 		{"callsign",	required_argument, NULL, 'S'},
 #endif
-		{"ctl",		required_argument, NULL, 'C'},
+		{"ctl",		required_argument, NULL, 'c'},
 
 		{"help",	no_argument, NULL, 'h'},
 	};
