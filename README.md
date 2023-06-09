@@ -25,7 +25,7 @@ git clone https://github.com/barteqcz/MicroRDS.git
 ### Tweaking the features
 
 In case you want the program to use RBDS, take a look into the *Makefile* file. There you will find descriptions.<br>
-RDBS is disabled by default.
+RDBS is disabled by default, but Stereo is enabled by default.
 
 ### Compilation
 
