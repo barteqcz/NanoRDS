@@ -1,9 +1,10 @@
 # name of executable
 name = micrords
 
-# change to "1" to enable RBDS
+# change those values to "1" to enable RBDS and Stereo
 # (don't forget to run "make clean" first)
 RBDS = 0
+STEREO = 0
 
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -std=c18
@@ -13,6 +14,10 @@ libs = -lm -lsamplerate -lpthread -lao
 
 ifeq ($(RBDS), 1)
 	CFLAGS += -DRBDS
+endif
+
+ifeq ($(STEREO), 1)
+	CFLAGS += -DSTEREO
 endif
 
 ifeq ($(CONTROL_PIPE_MESSAGES), 1)
