@@ -1,10 +1,10 @@
 # name of executable
 name = micrords
 
-# change those values to "1" to enable RBDS and Stereo
+# change those values to "1" to enable those functions, change to "0" to disable 'em.
 # (don't forget to run "make clean" first)
 RBDS = 0
-STEREO = 0
+STEREO = 1
 
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -std=c18
