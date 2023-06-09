@@ -38,7 +38,11 @@ void set_output_volume(uint8_t vol) {
 
 /* subcarrier volumes */
 static float volumes[] = {
-	0.09f, /* pilot tone: 9% */
+	#ifdef STEREO
+		0.09f, /* pilot tone: 9% */
+	#else
+		0.00f, /* pilot tone: 0% */
+	#endif
 	0.09f, /* RDS: 4.5% modulation */
 };
 
@@ -54,8 +58,12 @@ void set_carrier_volume(uint8_t carrier, uint8_t new_volume) {
 
 void fm_mpx_init(uint32_t sample_rate) {
 	/* initialize the subcarrier oscillators */
-    osc_init(&osc_19k, sample_rate, 19000.0f);
-    osc_init(&osc_57k, sample_rate, 57000.0f);
+    #ifdef STEREO
+		osc_init(&osc_19k, sample_rate, 19000.0f);
+	#else
+		osc_init(&osc_19k, sample_rate, 00000.0f);
+	#endif
+    osc_init(&osc_57k, sample_rate, 19000.0f);
 }
 
 void fm_rds_get_frames(float *outbuf, size_t num_frames) {
