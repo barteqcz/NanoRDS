@@ -1,7 +1,7 @@
 # name of executable
 name = micrords
 
-# change those values to "1" to enable those functions, change to "0" to disable 'em.
+# change those values to "1" to enable those functions, change to "0" to disable them.
 # (don't forget to run "make clean" first)
 RBDS = 0
 STEREO = 1
