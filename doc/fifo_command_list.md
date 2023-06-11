@@ -59,7 +59,7 @@ Pick between normal (0) and "polar" (1) stereo. Don't use polar stereo unless yo
 `ST 0`
 
 #### `PTY`
-Set the Program Type. Used to identify the format the station is broadcasting. Valid range is 0-31. Each code corresponds to a Program Type text.
+Set the Program Type (full list [here](https://github.com/barteqcz/MicroRDS/blob/main/doc/pty.md)) Used to identify the format the station is broadcasting. Valid range is 0-31. Each code corresponds to a Program Type text.
 
 `PTY 0`
 
