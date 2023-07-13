@@ -130,7 +130,6 @@ int main(int argc, char **argv) {
 	struct option	long_opt[] =
 	{
 		{"volume",	required_argument, NULL, 'v'},
-
 		{"rds",		required_argument, NULL, 'R'},
 		{"pi",		required_argument, NULL, 'i'},
 		{"ps",		required_argument, NULL, 's'},
@@ -143,7 +142,6 @@ int main(int argc, char **argv) {
 		{"callsign",	required_argument, NULL, 'S'},
 #endif
 		{"ctl",		required_argument, NULL, 'c'},
-
 		{"help",	no_argument, NULL, 'h'},
 	};
 
