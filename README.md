@@ -4,11 +4,13 @@ MicroRDS is a lightweight, software RDS encoder for Linux.
 
 ![MicroRDS](doc/MicroRDS.jpg)
 
-### Features
+### Key Features:
 
-- low-resource requirements
-- supports PS, PTY, PI, RT, RT+, CT, PTYN
-- supports FIFO control, so scripts in Bash, Python, etc. to control RDS can be written.
+- Lightweightness: Designed with efficiency in mind, the system boasts minimal resource requirements, ensuring optimal performance on a variety of hardware configurations.
+
+- Extensive protocol support: Built-in compatibility for PS, PTY, PI, RT, RT+, CT, and PTYN.
+
+- Seamless script usage: Flexibility of using familiar scripting languages like Bash, Python, and more, to effortlessly control RDS through FIFO.
 
 ## Installation
 
@@ -22,6 +24,7 @@ on Fedora, run `sudo dnf install libao libsamplerate` <br>
 ```
 git clone https://github.com/barteqcz/MicroRDS.git
 ```
+
 ### Tweaking the features
 
 In case you want the program to use RBDS, or if you want it to not use Stereo encoder, take a look into the *Makefile* file. There you will find descriptions.<br>
