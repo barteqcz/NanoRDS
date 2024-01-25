@@ -30,6 +30,7 @@ static struct {
 	uint8_t type[2];
 	uint8_t start[2];
 	uint8_t len[2];
+        uint8_t enabled;
 } rtplus_cfg;
 
 static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
