@@ -15,7 +15,7 @@ MicroRDS is a lightweight, software RDS encoder for Linux.
 ### Dependencies
 on Debian-based distros, run `sudo apt install libao-dev libsamplerate0-dev` <br>
 on Arch-based distros, run `sudo pacman -S libao libsamplerate` <br>
-on Fedora, run `sudo dnf install libao libsamplerate` <br>
+on Fedora, run `sudo dnf install libao-devel libsamplerate-devel` <br>
 
 ### Downloading the code
 
