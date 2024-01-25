@@ -130,8 +130,6 @@ int main(int argc, char **argv) {
 	struct option	long_opt[] =
 	{
 		{"volume",	required_argument, NULL, 'v'},
-
-		{"rds",		required_argument, NULL, 'R'},
 		{"pi",		required_argument, NULL, 'i'},
 		{"ps",		required_argument, NULL, 's'},
 		{"rt",		required_argument, NULL, 'r'},
