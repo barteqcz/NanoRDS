@@ -232,17 +232,18 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
     static uint8_t group_11a_count = 0;
 
     // Type 3A groups
-    if (++group_3a_count >= 20) {
-        group_3a_count = 0;
-        get_rds_oda_group(blocks);
-        return 1;
+    if (rtplus_cfg.running) {
+        if (++group_3a_count >= 20) {
+            group_3a_count = 0;
+            get_rds_oda_group(blocks);
+            return 1;
+        }
     }
 
     // Type 10A groups
     if (rds_data.ptyn[0]) {
         if (++group_10a_count >= 10) {
             group_10a_count = 0;
-            // Do not generate a 10A group if PTYN is off
             get_rds_ptyn_group(blocks);
             return 1;
         }
