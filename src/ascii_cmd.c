@@ -7,8 +7,8 @@
  * If a command is received, process it and update the RDS data.
  *
  */
-void process_ascii_cmd(unsigned char *cmd) {
-	unsigned char *arg;
+void process_ascii_cmd(char *cmd) {
+	char *arg;
 	uint8_t cmd_len = 0;
 
 	while (cmd[cmd_len] != 0 && cmd_len < 255)
