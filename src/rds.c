@@ -265,34 +265,37 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
  * This generates sequences of the form 0A, 2A, 0A, 2A, 0A, 2A, etc.
  */
 static void get_rds_group(uint16_t *blocks) {
-	static uint8_t state;
+    static uint8_t state;
+    static uint8_t group_counter;  // Counter to keep track of groups
 
-	// Basic block data
-	blocks[0] = rds_data.pi;
-	blocks[1] = (rds_data.tp & 1) << 10 | (rds_data.pty & INT8_L5) << 5;
-	blocks[2] = 0;
-	blocks[3] = 0;
+    // Basic block data
+    blocks[0] = rds_data.pi;
+    blocks[1] = (rds_data.tp & 1) << 10 | (rds_data.pty & INT8_L5) << 5;
+    blocks[2] = 0;
+    blocks[3] = 0;
 
-	// Generate block content
-	// CT (clock time) has priority on other group types
-	if (!(rds_data.tx_ctime && get_rds_ct_group(blocks))) {
-		if (!get_rds_other_groups(blocks)) { // Other groups
-			// These are always transmitted
-			if (!state) { // Type 0A groups
-				get_rds_ps_group(blocks);
-				state++;
-			} else { // Type 2A groups
-				get_rds_rt_group(blocks);
-				if (!rds_state.rt_bursting) state++;
-			}
-			if (state == 2) state = 0;
-		}
-	}
+    // Generate block content
+    // CT (clock time) has priority on other group types
+    if (!(rds_data.tx_ctime && get_rds_ct_group(blocks))) {
+        if (!get_rds_other_groups(blocks)) { // Other groups
+            // These are always transmitted
+            if (group_counter < 4) { // Send four 2A groups
+                get_rds_rt_group(blocks);
+            } else { // After four 2A groups, send four 0A groups
+                get_rds_ps_group(blocks);
+            }
 
-	/* for version B groups */
-	if ((blocks[1] >> 11) & 1) {
-		blocks[2] = rds_data.pi;
-	}
+            group_counter++;
+            if (group_counter == 8) {
+                group_counter = 0;  // Reset counter after sending eight groups
+            }
+        }
+    }
+
+    /* for version B groups */
+    if ((blocks[1] >> 11) & 1) {
+        blocks[2] = rds_data.pi;
+    }
 }
 
 void get_rds_bits(uint8_t *bits) {
