@@ -8,7 +8,7 @@ static struct pollfd poller;
 /*
  * Opens a file (pipe) to be used to control the RDS coder.
  */
-int open_control_pipe(unsigned char *filename) {
+int open_control_pipe(char *filename) {
 	fd = open(filename, O_RDONLY);
 	if (fd == -1) return -1;
 
