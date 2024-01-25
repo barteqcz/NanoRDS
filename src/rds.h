@@ -95,7 +95,6 @@ typedef struct rds_params_t {
  * the group version
  */
 #define GROUP_VER_A	0
-#define GROUP_VER_B	1
 
 // Version A groups
 #define GROUP_0A	(GROUP_TYPE_0 | GROUP_VER_A)
@@ -114,24 +113,6 @@ typedef struct rds_params_t {
 #define GROUP_13A	(GROUP_TYPE_13 | GROUP_VER_A)
 #define GROUP_14A	(GROUP_TYPE_14 | GROUP_VER_A)
 #define GROUP_15A	(GROUP_TYPE_15 | GROUP_VER_A)
-
-// Version B groups
-#define GROUP_0B	(GROUP_TYPE_0 | GROUP_VER_B)
-#define GROUP_1B	(GROUP_TYPE_1 | GROUP_VER_B)
-#define GROUP_2B	(GROUP_TYPE_2 | GROUP_VER_B)
-#define GROUP_3B	(GROUP_TYPE_3 | GROUP_VER_B)
-#define GROUP_4B	(GROUP_TYPE_4 | GROUP_VER_B)
-#define GROUP_5B	(GROUP_TYPE_5 | GROUP_VER_B)
-#define GROUP_6B	(GROUP_TYPE_6 | GROUP_VER_B)
-#define GROUP_7B	(GROUP_TYPE_7 | GROUP_VER_B)
-#define GROUP_8B	(GROUP_TYPE_8 | GROUP_VER_B)
-#define GROUP_9B	(GROUP_TYPE_9 | GROUP_VER_B)
-#define GROUP_10B	(GROUP_TYPE_10 | GROUP_VER_B)
-#define GROUP_11B	(GROUP_TYPE_11 | GROUP_VER_B)
-#define GROUP_12B	(GROUP_TYPE_12 | GROUP_VER_B)
-#define GROUP_13B	(GROUP_TYPE_13 | GROUP_VER_B)
-#define GROUP_14B	(GROUP_TYPE_14 | GROUP_VER_B)
-#define GROUP_15B	(GROUP_TYPE_15 | GROUP_VER_B)
 
 #define GET_GROUP_TYPE(x)	((x >> 4) & 15)
 #define GET_GROUP_VER(x)	(x & 1) // only check bit 0
