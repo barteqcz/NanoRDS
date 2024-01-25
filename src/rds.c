@@ -262,7 +262,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 }
 
 /* Creates an RDS group.
- * This generates sequences of the form 0A, 2A, 0A, 2A, 0A, 2A, etc.
+ * This generates sequences of the form 0A, 0A, 0A, 0A, 2A, 2A, 2A, 2A etc.
  */
 static void get_rds_group(uint16_t *blocks) {
     static uint8_t group_counter;  // Counter to keep track of groups
