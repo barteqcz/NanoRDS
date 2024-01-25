@@ -250,10 +250,12 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
     }
 
     // Type 11A groups
-    if (++group_11a_count >= 30) {
-        group_11a_count = 0;
-        get_rds_rtplus_group(blocks);
-        return 1;
+    if (rtplus_config.enabled = 1) {
+        if (++group_11a_count >= 30) {
+            group_11a_count = 0;
+            get_rds_rtplus_group(blocks);
+            return 1;
+        }
     }
 
     return 0;
