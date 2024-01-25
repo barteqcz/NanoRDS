@@ -232,6 +232,7 @@ static void get_rds_rtplus_group(uint16_t *blocks) {
 /* Lower priority groups are placed in a subsequence
  */
 static uint8_t get_rds_other_groups(uint16_t *blocks) {
+	static uint8_t group[GROUP_15B];
 
 	// Type 3A groups
 	if (++group[GROUP_3A] >= 20) {
@@ -289,6 +290,11 @@ static void get_rds_group(uint16_t *blocks) {
                 group_counter = 0;  // Reset counter after sending eight groups
             }
         }
+    }
+
+    /* for version B groups */
+    if ((blocks[1] >> 11) & 1) {
+        blocks[2] = rds_data.pi;
     }
 }
 
