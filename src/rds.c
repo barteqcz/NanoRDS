@@ -13,11 +13,6 @@ static struct {
 	uint8_t rt_segments;
 	uint8_t rt_bursting;
 	uint8_t ptyn_update;
-
-	/* eRT */
-	uint8_t ert_update;
-	uint8_t ert_segments;
-	uint8_t ert_bursting;
 } rds_state;
 
 // ODA
