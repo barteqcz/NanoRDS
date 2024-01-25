@@ -23,7 +23,6 @@
 #define PS_LENGTH 8
 #define PTYN_LENGTH 8
 #define LPS_LENGTH	32
-#define ERT_LENGTH	128
 
 /* AF list size
  *
@@ -63,9 +62,6 @@ typedef struct rds_params_t {
 
 	/* Long PS */
 	char lps[LPS_LENGTH];
-
-	/* eRT */
-	char ert[ERT_LENGTH];
 } rds_params_t;
 /* Here, the first member of the struct must be a scalar to avoid a
    warning on -Wmissing-braces with GCC < 4.8.3
@@ -193,11 +189,8 @@ extern void set_rds_pi(uint16_t pi_code);
 extern void set_rds_rt(char *rt);
 extern void set_rds_ps(char *ps);
 extern void set_rds_lps(char *lps);
-extern void set_rds_ert(char *ert);
 extern void set_rds_rtplus_flags(uint8_t running, uint8_t toggle);
 extern void set_rds_rtplus_tags(uint8_t *tags);
-extern void set_rds_ertplus_flags(uint8_t running, uint8_t toggle);
-extern void set_rds_ertplus_tags(uint8_t *tags);
 extern void set_rds_ta(uint8_t ta);
 extern void set_rds_pty(uint8_t pty);
 extern void set_rds_ptyn(char *ptyn);
