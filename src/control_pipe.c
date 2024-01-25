@@ -24,9 +24,9 @@ int open_control_pipe(unsigned char *filename) {
  * calls process_ascii_cmd.
  */
 void poll_control_pipe() {
-	static unsigned char pipe_buf[CTL_BUFFER_SIZE];
-	static unsigned char cmd_buf[CMD_BUFFER_SIZE];
-	unsigned char *token;
+	static char pipe_buf[CTL_BUFFER_SIZE];
+	static char cmd_buf[CMD_BUFFER_SIZE];
+	char *token;
 
 	/* check for new commands */
 	if (poll(&poller, 1, READ_TIMEOUT_MS) <= 0) return;
