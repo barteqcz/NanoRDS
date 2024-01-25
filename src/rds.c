@@ -30,7 +30,6 @@ static struct {
 	uint8_t type[2];
 	uint8_t start[2];
 	uint8_t len[2];
-        uint8_t enabled;
 } rtplus_cfg;
 
 static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
@@ -250,7 +249,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
     }
 
     // Type 11A groups
-    if (rtplus_config.enabled = 1) {
+    if (rtplus_cfg.running) {
         if (++group_11a_count >= 30) {
             group_11a_count = 0;
             get_rds_rtplus_group(blocks);
@@ -382,7 +381,6 @@ void set_rds_ps(char *ps) {
 void set_rds_rtplus_flags(uint8_t running, uint8_t toggle) {
 	rtplus_cfg.running	= running & 1;
 	rtplus_cfg.toggle	= toggle & 1;
-	rtplus_cfg.enabled      = rtplus_cfg.running;
 }
 
 void set_rds_rtplus_tags(uint8_t *tags) {
