@@ -227,33 +227,35 @@ static void get_rds_rtplus_group(uint16_t *blocks) {
 /* Lower priority groups are placed in a subsequence
  */
 static uint8_t get_rds_other_groups(uint16_t *blocks) {
-	static uint8_t group[GROUP_15B];
+    static uint8_t group_3a_count = 0;
+    static uint8_t group_10a_count = 0;
+    static uint8_t group_11a_count = 0;
 
-	// Type 3A groups
-	if (++group[GROUP_3A] >= 20) {
-		group[GROUP_3A] = 0;
-		get_rds_oda_group(blocks);
-		return 1;
-	}
+    // Type 3A groups
+    if (++group_3a_count >= 20) {
+        group_3a_count = 0;
+        get_rds_oda_group(blocks);
+        return 1;
+    }
 
-	// Type 10A groups
-	if (rds_data.ptyn[0]) {
-		if (++group[GROUP_10A] >= 10) {
-			group[GROUP_10A] = 0;
-			// Do not generate a 10A group if PTYN is off
-			get_rds_ptyn_group(blocks);
-			return 1;
-		}
-	}
+    // Type 10A groups
+    if (rds_data.ptyn[0]) {
+        if (++group_10a_count >= 10) {
+            group_10a_count = 0;
+            // Do not generate a 10A group if PTYN is off
+            get_rds_ptyn_group(blocks);
+            return 1;
+        }
+    }
 
-	// Type 11A groups
-	if (++group[rtplus_cfg.group] >= 30) {
-		group[rtplus_cfg.group] = 0;
-		get_rds_rtplus_group(blocks);
-		return 1;
-	}
+    // Type 11A groups
+    if (++group_11a_count >= 30) {
+        group_11a_count = 0;
+        get_rds_rtplus_group(blocks);
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 /* Creates an RDS group.
@@ -284,11 +286,6 @@ static void get_rds_group(uint16_t *blocks) {
                 group_counter = 0;  // Reset counter after sending eight groups
             }
         }
-    }
-
-    /* for version B groups */
-    if ((blocks[1] >> 11) & 1) {
-        blocks[2] = rds_data.pi;
     }
 }
 
