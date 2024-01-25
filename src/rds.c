@@ -382,6 +382,7 @@ void set_rds_ps(char *ps) {
 void set_rds_rtplus_flags(uint8_t running, uint8_t toggle) {
 	rtplus_cfg.running	= running & 1;
 	rtplus_cfg.toggle	= toggle & 1;
+	rtplus_cfg.enabled      = rtplus_cfg.running;
 }
 
 void set_rds_rtplus_tags(uint8_t *tags) {
