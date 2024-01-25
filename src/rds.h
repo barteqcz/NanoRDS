@@ -115,7 +115,7 @@ typedef struct rds_params_t {
 #define GROUP_15A	(GROUP_TYPE_15 | GROUP_VER_A)
 
 #define GET_GROUP_TYPE(x)	((x >> 4) & 15)
-#define GET_GROUP_VER(x)	(x & 1) // only check bit 0
+#define GET_GROUP_VER(x)	(x == 0)
 
 #define DI_STEREO	(1 << 0) // 1 - Stereo
 #define DI_AH		(1 << 1) // 2 - Artificial Head
