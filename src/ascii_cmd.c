@@ -19,9 +19,11 @@ void process_ascii_cmd(char *cmd) {
 
 /*		
 		if (strncmp(cmd, "AF", 2) == 0) {
-  			struct rds_af_t af
-     			
-			set_rds_af(af);
+  			struct rds_af_t af_list;
+     			af_list.num_entries = 1;
+			af_list.num_afs = 1;
+     			af_list.afs[0] = 98;
+			set_rds_af(af_list);
 			return;
 		}
 */
