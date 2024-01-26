@@ -6,6 +6,7 @@ MicroRDS is a lightweight, software RDS encoder for Linux.
 
 ### Roadmap
 - GPIO support (for RPi)
+- UECP
 - code optimalization
 
 ### Key Features:
