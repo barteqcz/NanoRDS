@@ -19,7 +19,7 @@ void process_ascii_cmd(char *cmd) {
 
 /*		
 		if (strncmp(cmd, "AF", 2) == 0) {
-
+			add_rds_af(struct rds_af_t *af_list, float freq);
 			return;
 		}
 */
