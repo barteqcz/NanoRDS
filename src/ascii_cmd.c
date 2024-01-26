@@ -17,6 +17,14 @@ void process_ascii_cmd(char *cmd) {
 	if (cmd_len > 3 && cmd[2] == ' ') {
 		arg = cmd + 3;
 
+/*		
+		if (strncmp(cmd, "AF", 2) == 0) {
+  			struct rds_af_t af
+     			
+			set_rds_af(af);
+			return;
+		}
+*/
 		if (strncmp(cmd, "PI", 2) == 0) {
 			arg[4] = 0;
 			set_rds_pi(strtoul(arg, NULL, 16));
