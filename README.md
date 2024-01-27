@@ -1,51 +1,91 @@
-# MicroRDS
+### MicroRDS FIFO command list
 
-MicroRDS is a lightweight, software RDS encoder for Linux.
+This is a complete list of commands MicroRDS handles via FIFO.
 
-![MicroRDS](doc/MicroRDS.jpg)
-
-### Roadmap
-- GPIO support (for RPi)
-- UECP
-- code optimalization
-
-### Key Features:
-
-- Lightweightness: Designed with efficiency in mind, the system boasts minimal resource requirements, ensuring optimal performance on a variety of hardware configurations.
-
-- Extensive protocol support: Built-in compatibility for PS, PTY, PI, RT, RT+, CT, and PTYN.
-
-- Seamless script usage: Flexibility of using familiar scripting languages like Bash, Python, and more, to effortlessly control RDS through FIFO.
-
-## Installation
-
-### Dependencies
-on Debian-based distros, run `sudo apt install libao-dev libsamplerate0-dev` <br>
-on Arch-based distros, run `sudo pacman -S libao libsamplerate` <br>
-on Fedora, run `sudo dnf install libao-devel libsamplerate-devel` <br>
-
-### Downloading the code
-
+Create the control pipe and enable FIFO control:
 ```
-git clone https://github.com/barteqcz/MicroRDS.git
+mkfifo rds
+./micrords --ctl rds
 ```
+Then you can send the commands to change particular elements of the RDS.
 
-### Tweaking the features
+Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored. 
 
-If you prefer the program to utilize RBDS or disable the Stereo encoder, refer to the Makefile file for relevant instructions. RBDS is disabled by default, while Stereo is enabled by default.
+For example `TA ON` switches the Traffic Announcement flag to *on*, and any other value switches it to *off*.
 
-### Compilation
+## Commands
 
-Go to the `src` folder, and simply run `make`
+### `AF`
+Sets AF frequency. It uses two flags:
+#### a - to add a frequency to the AF list.
 
-## Usage
+Example usage: `AF a 87.7`
 
-Once you compiled the program, use `./micrords` to run it. 
+#### r - to reset the AF list and delete all frequencies.
 
-To see available FIFO commands list, see [FIFO command list](https://github.com/barteqcz/MicroRDS/blob/main/doc/fifo_command_list.md)
+Example usage: `AF r`
 
-To see available program-built-in commands, run `./micrords --help`
+### `PI`
+Sets the PI code. This takes 4 hexadecimal digits.
 
-## Credits
+`PI 1000`
 
-MicroRDS is a fork of [MiniRDS](https://github.com/Anthony96922/MiniRDS) written by [Anthony96922](https://github.com/Anthony96922)
+### `PS`
+The Program Service text. Maximum is 8 characters. This is usually static, such as the station's callsign, but can be dynamically updated.
+
+`PS Hello`
+
+### `RT`
+The Radiotext to be displayed. This can be up to 64 characters.
+
+`RT This is a Radiotext message`
+
+### `TA`
+To signal to receivers that there is traffic information currently being broadcast.
+
+`TA 1`
+
+### `TP`
+To signal to receivers that the broadcast can carry traffic info.
+
+`TP 1`
+
+### `MS`
+The Music/Speech flag. Music is 1 and speech is 0.
+
+`MS 1`
+
+### `DI`
+Decoder Identification. A 4-bit decimal number. Usually only the "stereo" flag (1) is set.
+
+`DI 1`
+
+### `PTY`
+Set the Program Type (full list [here](https://github.com/barteqcz/MicroRDS/blob/main/doc/pty.md)) Used to identify the format the station is broadcasting. Valid range is 0-31. Each code corresponds to a Program Type text.
+
+`PTY 0`
+
+### `MPX`
+Set volumes in percent modulation for individual MPX subcarrier signals. The first value is responsible for stereo pilot, but the second - for RDS strength.
+
+`MPX 9,9`
+
+### `VOL`
+Set the output volume in percent.
+
+`VOL 100`
+
+### `PTYN`
+Program Type Name. Used for broadcasting a more specific format identifier. `PTYN OFF` disables broadcasting the PTYN.
+
+`PTYN CHR`
+
+### `RTP`
+Radiotext Plus tagging data. Comma-separated values specifying content type, start offset and length. <br> Format: `<content type 1>,<start 1>,<length 1>,<content type 2>,<start 2>,<length 2>`.
+
+`RTP 0,0,0,0,0,0`
+
+### `RTPF`
+Sets the Radiotext Plus "Running" and "Toggle" flags.
+
+`RTPF 1,0`
