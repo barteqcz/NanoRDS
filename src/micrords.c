@@ -60,7 +60,6 @@ static void show_help() {
 		"    -s, --ps           Program Service name\n"
 		"    -r, --rt           Radio Text\n"
 		"    -p, --pty          Program Type\n"
-		"    -t, --tp           Traffic Program\n"
 		"    -c, --ctl          FIFO control pipe\n"
 		"    -h, --help         Show this help text and exit\n"
         "\n"
@@ -112,11 +111,11 @@ int main(int argc, char **argv) {
 	pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t control_pipe_cond;
 
-	const char	*short_opt = "v:R:i:s:r:p:T:A:P:"
+	const char	*short_opt = "v:i:s:r:p:"
 #ifdef RBDS
 	"S:"
 #endif
-	"C:h";
+	"c:h";
 
 	struct option	long_opt[] =
 	{
@@ -125,9 +124,7 @@ int main(int argc, char **argv) {
 		{"ps",		required_argument, NULL, 's'},
 		{"rt",		required_argument, NULL, 'r'},
 		{"pty",		required_argument, NULL, 'p'},
-		{"tp",		required_argument, NULL, 't'},
-		{"af",		required_argument, NULL, 'a'},
-		{"ptyn",	required_argument, NULL, 'P'},
+
 #ifdef RBDS
 		{"callsign",	required_argument, NULL, 'S'},
 #endif
@@ -169,19 +166,6 @@ keep_parsing_opts:
 
 		case 'p': //pty
 			rds_params.pty = strtoul(optarg, NULL, 10);
-			break;
-
-		case 't': //tp
-			rds_params.tp = strtoul(optarg, NULL, 10);
-			break;
-
-		case 'a': //af
-			if (add_rds_af(&rds_params.af, strtof(optarg, NULL)) == 1) return 1;
-			break;
-
-		case 'P': //ptyn
-			strncpy(ptyn, optarg, PTYN_LENGTH);
-			memcpy(rds_params.ptyn, ptyn, PTYN_LENGTH);
 			break;
 
 #ifdef RBDS
