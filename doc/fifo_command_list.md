@@ -45,11 +45,6 @@ The Music/Speech flag. Music is 1 and speech is 0.
 
 `MS 1`
 
-#### `AB`
-The Radiotext A/B flag. This should not be used, as updates to RT automatically toggle this flag.
-
-`AB A`
-
 #### `DI`
 Decoder Identification. A 4-bit decimal number. Usually only the "stereo" flag (1) is set.
 
