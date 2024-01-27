@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
 	char ps[PS_LENGTH+1];
 	char rt[RT_LENGTH+1];
 	char ptyn[PTYN_LENGTH+1];
-	uint8_t volume = 50;
+	uint8_t volume = 100;
 
 	// buffers
 	float *mpx_buffer;
