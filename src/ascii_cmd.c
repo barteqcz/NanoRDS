@@ -106,10 +106,8 @@ void process_ascii_cmd(char *cmd) {
 		}
 		if (strncmp(cmd, "MPX", 3) == 0) {
 			uint8_t gains[5];
-			if (sscanf(arg, "%hhu,%hhu,%hhu,%hhu,%hhu",
-				&gains[0], &gains[1], &gains[2], &gains[3],
-				&gains[4]) == 5) {
-				for (uint8_t i = 0; i < 5; i++) {
+			if (sscanf(arg, "%hhu,%hhu", &gains[0], &gains[1]) == 2) {
+				for (uint8_t i = 0; i < 2; i++) {
 					set_carrier_volume(i, gains[i]);
 				}
 			}
