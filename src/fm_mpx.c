@@ -20,11 +20,7 @@ void set_output_volume(uint8_t vol) {
 
 /* subcarrier volumes */
 static float volumes[] = {
-	#ifdef STEREO
-		0.09f, /* pilot tone: 9% */
-	#else
-		0.00f, /* pilot tone: 0% */
-	#endif
+	0.09f, /* pilot tone: 9% */
 	0.09f, /* RDS: 4.5% modulation */
 };
 
