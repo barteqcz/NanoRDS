@@ -1,10 +1,9 @@
 # name of executable
 name = micrords
 
-# change those values to "1" to enable those functions, change to "0" to disable them.
-# (don't forget to run "make clean" first)
+# NRSC RBDS (FCC)
+# Set to 1 for NRSC LF/MF AF coding and PTY list
 RBDS = 0
-STEREO = 1
 
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -std=c18
@@ -14,10 +13,6 @@ libs = -lm -lsamplerate -lpthread -lao
 
 ifeq ($(RBDS), 1)
 	CFLAGS += -DRBDS
-endif
-
-ifeq ($(STEREO), 1)
-	CFLAGS += -DSTEREO
 endif
 
 ifeq ($(CONTROL_PIPE_MESSAGES), 1)
