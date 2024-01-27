@@ -17,11 +17,11 @@ For example `TA ON` switches the Traffic Announcement flag to *on*, and any othe
 
 ### `AF`
 Sets AF frequency. It uses two flags:
-#### AF a - to add a frequency to the AF list.
+#### a - to add a frequency to the AF list.
 
 Example usage: `AF a 87.7`
 
-#### AF r - to reset the AF list and delete all frequencies.
+#### r - to reset the AF list and delete all frequencies.
 
 Example usage: `AF r`
 
