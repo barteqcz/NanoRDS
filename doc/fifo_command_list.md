@@ -50,11 +50,6 @@ Decoder Identification. A 4-bit decimal number. Usually only the "stereo" flag (
 
 `DI 1`
 
-#### `ST`
-Pick between normal (0) and "polar" (1) stereo. Don't use polar stereo unless you know what it is and have a need for it.
-
-`ST 0`
-
 #### `PTY`
 Set the Program Type (full list [here](https://github.com/barteqcz/MicroRDS/blob/main/doc/pty.md)) Used to identify the format the station is broadcasting. Valid range is 0-31. Each code corresponds to a Program Type text.
 
@@ -69,11 +64,6 @@ Set volumes in percent modulation for individual MPX subcarrier signals.
 Set the output volume in percent.
 
 `VOL 100`
-
-#### `PPM`
-Sets the output sampling rate offset in PPM. This can be used to compensate for clock drift in the sound card.
-
-`PPM -20`
 
 #### `PTYN`
 Program Type Name. Used for broadcasting a more specific format identifier. `PTYN OFF` disables broadcasting the PTYN.
