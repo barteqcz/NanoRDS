@@ -62,7 +62,8 @@ static void show_help() {
 		"    -p, --pty          Program Type\n"
 		"    -c, --ctl          FIFO control pipe\n"
 		"    -h, --help         Show this help text and exit\n"
-        "\n"
+        	"\n"
+		"FIFO commands are in doc/fifo_command_list.md\n"
 	);
 }
 
