@@ -16,13 +16,44 @@ void process_ascii_cmd(char *cmd) {
 
 	if (cmd_len > 3 && cmd[2] == ' ') {
 		arg = cmd + 3;
-
-/*		
+	
 		if (strncmp(cmd, "AF", 2) == 0) {
-			add_rds_af(struct rds_af_t *af_list, float freq);
-			return;
+			uint8_t arg_count;
+			rds_af_t new_af;
+			char af_cmd;
+			float af[MAX_AFS], *af_iter;
+
+			arg_count = sscanf((char *)arg,
+				"%c " /* AF command */
+				"%f %f %f %f %f " /* AF list */
+				"%f %f %f %f %f "
+				"%f %f %f %f %f "
+				"%f %f %f %f %f "
+				"%f %f %f %f %f",
+			&af_cmd,
+			&af[0],  &af[1],  &af[2],  &af[3],  &af[4],
+			&af[5],  &af[6],  &af[7],  &af[8],  &af[9],
+			&af[10], &af[11], &af[12], &af[13], &af[14],
+			&af[15], &af[16], &af[17], &af[18], &af[19],
+			&af[20], &af[21], &af[22], &af[23], &af[24]);
+			switch (af_cmd) {
+			case 'a': /* add */
+				af_iter = af;
+				memset(&new_af, 0, sizeof(struct rds_af_t));
+				while ((arg_count-- - 1) != 0) {
+					add_rds_af(&new_af, *af_iter++);
+				}
+				set_rds_af(new_af);
+				break;
+			case 'r': /* reset */
+				memset(&new_af, 0, sizeof(struct rds_af_t));
+				set_rds_af(new_af);
+				break;
+			default: /* other */
+				return;
+			}
 		}
-*/
+
 		if (strncmp(cmd, "PI", 2) == 0) {
 			arg[4] = 0;
 			set_rds_pi(strtoul(arg, NULL, 16));
