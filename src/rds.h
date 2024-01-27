@@ -54,14 +54,10 @@ typedef struct rds_params_t {
 	char rt[RT_LENGTH];
 	// PTYN
 	char ptyn[PTYN_LENGTH];
-
 	// AF
 	struct rds_af_t af;
-
+	// CT
 	uint8_t tx_ctime;
-
-	/* Long PS */
-	char lps[LPS_LENGTH];
 } rds_params_t;
 /* Here, the first member of the struct must be a scalar to avoid a
    warning on -Wmissing-braces with GCC < 4.8.3
