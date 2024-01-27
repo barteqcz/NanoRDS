@@ -61,15 +61,6 @@ static void show_help() {
 		"    -r, --rt           Radio Text\n"
 		"    -p, --pty          Program Type\n"
 		"    -t, --tp           Traffic Program\n"
-#ifdef RBDS
-		"    -a, --af           Alternative Frequencies (FM/MF)\n"
-#else
-		"    -a, --af           Alternative Frequencies (FM/LF/MF)\n"
-#endif
-		"    -P, --ptyn         Program Type Name\n"
-#ifdef RBDS
-		"    -S, --callsign     FCC callsign to calculate the PI code from. It overrides PI set via -i or --pi\n"
-#endif
 		"    -c, --ctl          FIFO control pipe\n"
 		"    -h, --help         Show this help text and exit\n"
         "\n"
