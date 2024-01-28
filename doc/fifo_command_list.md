@@ -17,13 +17,21 @@ For example `TA ON` switches the Traffic Announcement flag to *on*, and any othe
 
 ### `AF`
 Sets AF frequency. It uses two flags:
-#### a - to add a frequency to the AF list.
+<br>
+#### s - to add a frequency to the AF list.
 
-Example usage: `AF a 87.7`
+I recommend using AF method A, which can be set this way:
 
-#### r - to reset the AF list and delete all frequencies.
+Example usage: `AF s 87.7 89 102 96.4`
 
-Example usage: `AF r`
+If you need AF method B, try to use something like this:
+
+Example usage: `AF s 101.9 101.9 87.7 87.7 89`
+<br>
+<br>
+#### c - to clear the AF list and delete all frequencies.
+
+Example usage: `AF c`
 
 ### `PI`
 Sets the PI code. This takes 4 hexadecimal digits.
@@ -66,12 +74,12 @@ Set the Program Type (full list [here](https://github.com/barteqcz/MicroRDS/blob
 `PTY 0`
 
 ### `MPX`
-Set volumes in percent modulation for individual MPX subcarrier signals. The first value is responsible for stereo pilot, but the second - for RDS strength.
+Set volumes in percent modulation for individual MPX subcarrier signals. The first value is responsible for stereo pilot, but the second - for RDS carrier.
 
 `MPX 9,9`
 
 ### `VOL`
-Set the output volume in percent.
+Set the general, encoder output volume in percent.
 
 `VOL 100`
 
@@ -86,6 +94,8 @@ Radiotext Plus tagging data. Comma-separated values specifying content type, sta
 `RTP 0,0,0,0,0,0`
 
 ### `RTPF`
-Sets the Radiotext Plus "Running" and "Toggle" flags.
+Sets the RT+ "Running" and "Toggle" flags. It's a 2-bit integer:
 
-`RTPF 1,0`
+`RTPF 1` - only toggle flag
+`RTPF 2` - only running flag
+`RTPF 3` - both running and toggle flags
