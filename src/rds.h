@@ -41,6 +41,8 @@ typedef struct rds_af_t {
 
 typedef struct rds_params_t {
 	uint16_t pi;
+	uint16_t ecc;
+	uint16_t lic;
 	uint8_t ta;
 	uint8_t pty;
 	uint8_t tp;
