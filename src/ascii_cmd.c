@@ -153,7 +153,7 @@ void process_ascii_cmd(unsigned char *str) {
 			set_rds_ecc(strtoul((char *)arg, NULL, 16));
 			return;
 		}
-		if (CMD_MATCHES("ECC")) {
+		if (CMD_MATCHES("LIC")) {
 			arg[2] = 0;
 			set_rds_lic(strtoul((char *)arg, NULL, 16));
 			return;
