@@ -109,7 +109,7 @@ static void get_rds_ecc_group(uint16_t *blocks) {
 }
 
 /* LIC group (1A)*/
-static void get_rds_ecc_group(uint16_t *blocks) {
+static void get_rds_lic_group(uint16_t *blocks) {
 	blocks[1] |= 1 << 12;
 	blocks[2] |= rds_data.lic;
 }
@@ -314,7 +314,7 @@ static void get_rds_group(uint16_t *blocks) {
 			} else if (group_counter < 18) {
 				get_rds_rt_group(blocks);
 			}
-			
+
 			group_counter++;
 			if (group_counter == 18) {
 				group_counter = 0;
