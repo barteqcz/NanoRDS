@@ -1,21 +1,3 @@
-/*
- * mpxgen - FM multiplex encoder with Stereo and RDS
- * Copyright (C) 2019 Anthony96922
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef RDS_H
 #define RDS_H
 
@@ -39,8 +21,6 @@
 #define RT_LENGTH	64
 #define PS_LENGTH	8
 #define PTYN_LENGTH	8
-#define LPS_LENGTH	32
-#define ERT_LENGTH	128
 
 /* AF list size
  *
@@ -72,22 +52,11 @@ typedef struct rds_params_t {
 	unsigned char rt[RT_LENGTH];
 	/* PTYN */
 	unsigned char ptyn[PTYN_LENGTH];
-
 	/* AF */
 	struct rds_af_t af;
-
+	/* CT */
 	uint8_t tx_ctime;
-
-	/* Long PS */
-	unsigned char lps[LPS_LENGTH];
-
-	/* eRT */
-	unsigned char ert[ERT_LENGTH];
 } rds_params_t;
-/* Here, the first member of the struct must be a scalar to avoid a
-   warning on -Wmissing-braces with GCC < 4.8.3
-   (bug: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53119)
-*/
 
 /* Group type
  *
@@ -244,14 +213,7 @@ typedef struct rds_params_t {
 #define INT16_14	0x4000
 #define INT16_15	0x8000
 
-/* 18 bit (for RDS2) */
-#define INT18_U2	0x30000
-#define INT18_L4	0x0000f
-
 #define IS_TYPE_B(a)	(a[1] & INT16_11)
-#ifdef RDS2
-#define IS_TUNNELING(a)	(a[0] == 0x0000)
-#endif
 
 /*
  * RDS ODA ID group
@@ -275,12 +237,7 @@ typedef struct rds_oda_t {
  * Extensive list: https://www.nrscstandards.org/committees/dsm/archive/rds-oda-aids.pdf
  */
 #define	ODA_AID_RTPLUS	0x4bd7
-#define ODA_AID_ERT	0x6552
-#define ODA_AID_ERTPLUS	0x4bd8
 #define ODA_9BIT_AF	0x6365
-/* RDS2 */
-#define ODA_AID_RFT	0xff7f
-#define ODA_AID_RFTPLUS	0xff80
 
 extern void init_rds_encoder(struct rds_params_t rds_params);
 extern void exit_rds_encoder();
@@ -288,12 +245,8 @@ extern void get_rds_bits(uint8_t *bits);
 extern void set_rds_pi(uint16_t pi_code);
 extern void set_rds_rt(unsigned char *rt);
 extern void set_rds_ps(unsigned char *ps);
-extern void set_rds_lps(unsigned char *lps);
-extern void set_rds_ert(unsigned char *ert);
 extern void set_rds_rtplus_flags(uint8_t flags);
 extern void set_rds_rtplus_tags(uint8_t *tags);
-extern void set_rds_ertplus_flags(uint8_t flags);
-extern void set_rds_ertplus_tags(uint8_t *tags);
 extern void set_rds_ta(uint8_t ta);
 extern void set_rds_pty(uint8_t pty);
 extern void set_rds_ptyn(unsigned char *ptyn);
