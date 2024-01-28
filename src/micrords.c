@@ -79,7 +79,6 @@ static void show_help(char *name, struct rds_params_t def_params) {
 #endif
 		"			(more than one AF may be passed)\n"
 		"-P, --ptyn		Program Type Name\n"
-		"				[default: \"%s\"]\n"
 		"-c, --ctl		FIFO control pipe\n"
 		"-h, --help		Show this help text and exit\n"
 		"\n"
@@ -88,7 +87,7 @@ static void show_help(char *name, struct rds_params_t def_params) {
 		name,
 		def_params.pi, def_params.ps,
 		def_params.rt, def_params.pty,
-		def_params.tp, def_params.ptyn
+		def_params.tp
 	);
 }
 
@@ -107,8 +106,7 @@ int main(int argc, char **argv) {
 	struct rds_params_t rds_params = {
 		.ps = "MicroRDS",
 		.rt = "MicroRDS: Software RDS encoder",
-		.pi = 0x1000,
-		.ptyn = "TEST"
+		.pi = 0x1000
 	};
 	uint8_t volume = 50;
 
