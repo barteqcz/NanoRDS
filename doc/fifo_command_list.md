@@ -84,7 +84,7 @@ Set the general, encoder output volume in percent.
 `VOL 100`
 
 ### `PTYN`
-Program Type Name. Used for broadcasting a more specific format identifier. `PTYN OFF` disables broadcasting the PTYN.
+Program Type Name. Used for broadcasting a more specific format identifier.
 
 `PTYN CHR`
 
