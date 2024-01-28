@@ -148,6 +148,16 @@ void process_ascii_cmd(unsigned char *str) {
 			set_output_volume(strtoul((char *)arg, NULL, 10));
 			return;
 		}
+		if (CMD_MATCHES("ECC")) {
+			arg[2] = 0;
+			set_rds_ecc(strtoul((char *)arg, NULL, 16));
+			return;
+		}
+		if (CMD_MATCHES("ECC")) {
+			arg[2] = 0;
+			set_rds_lic(strtoul((char *)arg, NULL, 16));
+			return;
+		}
 	}
 
 	if (cmd_len > 5 && str[4] == ' ') {
