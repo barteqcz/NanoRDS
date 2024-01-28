@@ -245,6 +245,8 @@ extern void init_rds_encoder(struct rds_params_t rds_params);
 extern void exit_rds_encoder();
 extern void get_rds_bits(uint8_t *bits);
 extern void set_rds_pi(uint16_t pi_code);
+extern void set_rds_ecc(uint16_t ecc_code);
+extern void set_rds_lic(uint16_t lic_code);
 extern void set_rds_rt(unsigned char *rt);
 extern void set_rds_ps(unsigned char *ps);
 extern void set_rds_rtplus_flags(uint8_t flags);
