@@ -314,9 +314,11 @@ static void get_rds_group(uint16_t *blocks) {
 			} else if (group_counter < 18) {
 				get_rds_rt_group(blocks);
 			}
+			
+			group_counter++;
 			if (group_counter == 18) {
 				group_counter = 0;
-			} 
+			}
 		}
 	}
 
