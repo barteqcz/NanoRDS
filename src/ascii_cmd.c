@@ -131,15 +131,10 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 		if (CMD_MATCHES("MPX")) {
-			uint8_t gains[5];
-			if (sscanf((char *)arg, "%hhu,%hhu,%hhu,%hhu,%hhu",
-				&gains[0], &gains[1], &gains[2], &gains[3],
-				&gains[4]) == 5) {
+			uint8_t gains[2];
+			if (sscanf((char *)arg, "%hhu,%hhu", &gains[0], &gains[1]) == 2) {
 				set_carrier_volume(0, gains[0]);
 				set_carrier_volume(1, gains[1]);
-				set_carrier_volume(2, gains[2]);
-				set_carrier_volume(3, gains[3]);
-				set_carrier_volume(4, gains[4]);
 			}
 			return;
 		}
