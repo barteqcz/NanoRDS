@@ -62,7 +62,6 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 		if (CMD_MATCHES("AF")) {
-			/* TODO: work on existing AF list */
 			uint8_t arg_count;
 			rds_af_t new_af;
 			char af_cmd;
