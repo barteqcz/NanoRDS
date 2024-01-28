@@ -1,21 +1,3 @@
-/*
- * mpxgen - FM multiplex encoder with Stereo and RDS
- * Copyright (C) 2019 Anthony96922
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "common.h"
 #include "rds.h"
 #include "fm_mpx.h"
@@ -149,33 +131,16 @@ void process_ascii_cmd(unsigned char *str) {
 			return;
 		}
 		if (CMD_MATCHES("MPX")) {
-			uint8_t gains[5];
-			if (sscanf((char *)arg, "%hhu,%hhu,%hhu,%hhu,%hhu",
-				&gains[0], &gains[1], &gains[2], &gains[3],
-				&gains[4]) == 5) {
+			uint8_t gains[2];
+			if (sscanf((char *)arg, "%hhu,%hhu", &gains[0], &gains[1]) == 2) {
 				set_carrier_volume(0, gains[0]);
 				set_carrier_volume(1, gains[1]);
-				set_carrier_volume(2, gains[2]);
-				set_carrier_volume(3, gains[3]);
-				set_carrier_volume(4, gains[4]);
 			}
 			return;
 		}
 		if (CMD_MATCHES("VOL")) {
 			arg[4] = 0;
 			set_output_volume(strtoul((char *)arg, NULL, 10));
-			return;
-		}
-		if (CMD_MATCHES("LPS")) {
-			arg[LPS_LENGTH] = 0;
-			if (arg[0] == '-') arg[0] = 0;
-			set_rds_lps(arg);
-			return;
-		}
-		if (CMD_MATCHES("ERT")) {
-			arg[ERT_LENGTH] = 0;
-			if (arg[0] == '-') arg[0] = 0;
-			set_rds_ert(arg);
 			return;
 		}
 	}
@@ -194,34 +159,6 @@ void process_ascii_cmd(unsigned char *str) {
 			arg[PTYN_LENGTH] = 0;
 			if (arg[0] == '-') arg[0] = 0;
 			set_rds_ptyn(arg);
-			return;
-		}
-		if (CMD_MATCHES("ERTP")) {
-			char tag_names[2][32];
-			uint8_t tags[6];
-			if (sscanf((char *)arg, "%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
-				&tags[0], &tags[1], &tags[2], &tags[3],
-				&tags[4], &tags[5]) == 6) {
-				set_rds_ertplus_tags(tags);
-			} else if (sscanf((char *)arg, "%31[^,],%hhu,%hhu,%31[^,],%hhu,%hhu",
-				tag_names[0], &tags[1], &tags[2],
-				tag_names[1], &tags[4], &tags[5]) == 6) {
-				tags[0] = get_rtp_tag_id(tag_names[0]);
-				tags[3] = get_rtp_tag_id(tag_names[1]);
-				set_rds_ertplus_tags(tags);
-			}
-			return;
-		}
-	}
-
-	if (cmd_len > 6 && str[5] == ' ') {
-		cmd = str;
-		cmd[5] = 0;
-		arg = str + 6;
-
-		if (CMD_MATCHES("ERTPF")) {
-			arg[1] = 0;
-			set_rds_ertplus_flags(strtoul((char *)arg, NULL, 10));
 			return;
 		}
 	}
