@@ -138,7 +138,7 @@ int main(int argc, char **argv) {
 		{"pty",		required_argument, NULL, 'p'},
 		{"tp",		required_argument, NULL, 'T'},
 		{"ptyn",	required_argument, NULL, 'P'},
-		{"ctl",		required_argument, NULL, 'c'}
+		{"ctl",		required_argument, NULL, 'c'},
 		{"help",	no_argument, NULL, 'h'},
 		{ 0,		0,		0,	0 }
 	};
