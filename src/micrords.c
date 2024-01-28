@@ -1,32 +1,12 @@
-/*
- * mpxgen - FM multiplex encoder with Stereo and RDS
- * Copyright (C) 2019 Anthony96922
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "common.h"
 #include <signal.h>
 #include <getopt.h>
 #include <pthread.h>
 #include <ao/ao.h>
-
 #include "rds.h"
 #include "fm_mpx.h"
 #include "control_pipe.h"
 #include "resampler.h"
-#include "net.h"
 #include "lib.h"
 #include "ascii_cmd.h"
 
@@ -71,63 +51,45 @@ static void *control_pipe_worker() {
 	pthread_exit(NULL);
 }
 
-static void *net_ctl_worker() {
-	while (!stop_rds) {
-		poll_ctl_socket();
-		msleep(READ_TIMEOUT_MS);
-	}
-
-	close_ctl_socket();
-	pthread_exit(NULL);
-}
-
 static void show_help(char *name, struct rds_params_t def_params) {
 	printf(
-		"This is MiniRDS, a lightweight RDS encoder.\n"
-		"Version %s\n"
-		"\n"
 		"Usage: %s [options]\n"
 		"\n"
-		"    -m,--volume       Output volume\n"
+		"-v, --volume		Output volume\n"
 		"\n"
 #ifdef RBDS
-		"    -i,--pi           Program Identification code or callsign\n"
-		"                      (PI code will be calculated from callsign)\n"
+		"-i, --pi		Program Identification code or callsign\n"
+		"			(PI code will be calculated from callsign)\n"
 #else
-		"    -i,--pi           Program Identification code\n"
+		"-i, --pi		Program Identification code\n"
 #endif
-		"                        [default: %04X]\n"
-		"    -s,--ps           Program Service name\n"
-		"                        [default: \"%s\"]\n"
-		"    -r,--rt           Radio Text\n"
-		"                        [default: \"%s\"]\n"
-		"    -p,--pty          Program Type\n"
-		"                        [default: %u]\n"
-		"    -T,--tp           Traffic Program\n"
-		"                        [default: %u]\n"
+		"				[default: %04X]\n"
+		"-s, --ps		Program Service name\n"
+		"				[default: \"%s\"]\n"
+		"-r, --rt		RadioText\n"
+		"				[default: \"%s\"]\n"
+		"-p, --pty		Program Type\n"
+		"				[default: %u]\n"
+		"-T, --tp		Traffic Program flag\n"
+		"				[default: %u]\n"
 #ifdef RBDS
-		"    -A,--af           Alternative Frequency (FM/MF)\n"
+		"-A, --af		Alternative Frequency (FM/MF)\n"
 #else
-		"    -A,--af           Alternative Frequency (FM/LF/MF)\n"
+		"-A, --af		Alternative Frequency (FM/LF/MF)\n"
 #endif
-		"                        (more than one AF may be passed)\n"
-		"    -P,--ptyn         Program Type Name\n"
+		"			(more than one AF may be passed)\n"
+		"-P, --ptyn		Program Type Name\n"
+		"				[default: \"%s\"]\n"
+		"-c, --ctl		FIFO control pipe\n"
+		"-h, --help		Show this help text and exit\n"
 		"\n"
-		"    -C,--ctl          FIFO control pipe\n"
-		"\n"
-		"    -h,--help         Show this help text and exit\n"
-		"    -v,--version      Show version and exit\n"
-		"\n",
-		VERSION,
+		"These commands, along with many other, can be set and updated dynamically through fifo.\n"
+		"See doc/fifo_command_list.md.\n",
 		name,
 		def_params.pi, def_params.ps,
 		def_params.rt, def_params.pty,
-		def_params.tp
+		def_params.tp, def_params.ptyn
 	);
-}
-
-static void show_version() {
-	printf("MiniRDS version %s\n", VERSION);
 }
 
 /* check MPX volume level */
@@ -143,9 +105,10 @@ int main(int argc, char **argv) {
 	int opt;
 	char control_pipe[51];
 	struct rds_params_t rds_params = {
-		.ps = "MiniRDS",
-		.rt = "MiniRDS: Software RDS encoder",
-		.pi = 0x1000
+		.ps = "MicroRDS",
+		.rt = "MicroRDS: Software RDS encoder",
+		.pi = 0x1000,
+		.ptyn = "TEST"
 	};
 	uint8_t volume = 50;
 
@@ -153,9 +116,6 @@ int main(int argc, char **argv) {
 	float *mpx_buffer;
 	float *out_buffer;
 	char *dev_out;
-
-	uint16_t port = 0;
-	uint8_t proto = 1;
 
 	int8_t r;
 	size_t frames;
@@ -174,22 +134,11 @@ int main(int argc, char **argv) {
 	pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_t control_pipe_cond;
 
-	/* network control socket */
-	pthread_t net_ctl_thread;
-	pthread_mutex_t net_ctl_mutex = PTHREAD_MUTEX_INITIALIZER;
-	pthread_cond_t net_ctl_cond;
-
-	const char	*short_opt = "m:R:i:s:r:p:T:A:P:"
-#ifdef RBDS
-	"S:"
-#endif
-	"C:hv";
+	const char	*short_opt = "v:i:s:r:p:T:A:P:c:h";
 
 	struct option	long_opt[] =
 	{
-		{"volume",	required_argument, NULL, 'm'},
-
-		{"rds",		required_argument, NULL, 'R'},
+		{"volume",	required_argument, NULL, 'v'},
 		{"pi",		required_argument, NULL, 'i'},
 		{"ps",		required_argument, NULL, 's'},
 		{"rt",		required_argument, NULL, 'r'},
@@ -197,10 +146,8 @@ int main(int argc, char **argv) {
 		{"tp",		required_argument, NULL, 'T'},
 		{"af",		required_argument, NULL, 'A'},
 		{"ptyn",	required_argument, NULL, 'P'},
-		{"ctl",		required_argument, NULL, 'C'},
-
+		{"ctl",		required_argument, NULL, 'c'},
 		{"help",	no_argument, NULL, 'h'},
-		{"version",	no_argument, NULL, 'v'},
 		{ 0,		0,		0,	0 }
 	};
 
@@ -212,7 +159,7 @@ keep_parsing_opts:
 	if (opt == -1) goto done_parsing_opts;
 
 	switch (opt) {
-		case 'm': /* volume */
+		case 'v': /* volume */
 			volume = strtoul(optarg, NULL, 10);
 			if (check_mpx_vol(volume) > 0) return 1;
 			break;
@@ -255,13 +202,9 @@ keep_parsing_opts:
 			memcpy(rds_params.ptyn, xlat((unsigned char *)optarg), PTYN_LENGTH);
 			break;
 
-		case 'C': /* ctl */
+		case 'c': /* ctl */
 			memcpy(control_pipe, optarg, 50);
 			break;
-
-		case 'v': /* version */
-			show_version();
-			return 0;
 
 		case 'h': /* help */
 		case '?':
@@ -277,8 +220,6 @@ done_parsing_opts:
 	/* Initialize pthread stuff */
 	pthread_mutex_init(&control_pipe_mutex, NULL);
 	pthread_cond_init(&control_pipe_cond, NULL);
-	pthread_mutex_init(&net_ctl_mutex, NULL);
-	pthread_cond_init(&net_ctl_cond, NULL);
 	pthread_attr_init(&attr);
 
 	/* Setup buffers */
@@ -347,22 +288,6 @@ done_parsing_opts:
 		}
 	}
 
-	/* ASCII control over network socket */
-	if (port) {
-		if (open_ctl_socket(port, proto) == 0) {
-			fprintf(stderr, "Reading control commands on port %d.\n", port);
-			r = pthread_create(&net_ctl_thread, &attr, net_ctl_worker, NULL);
-			if (r < 0) {
-				fprintf(stderr, "Could not create network control thread.\n");
-				goto exit;
-			} else {
-				fprintf(stderr, "Created network control thread.\n");
-			}
-		} else {
-			fprintf(stderr, "Failed to open port %d.\n", port);
-		}
-	}
-
 	for (;;) {
 		fm_rds_get_frames(mpx_buffer, NUM_MPX_FRAMES_IN);
 
@@ -390,12 +315,6 @@ exit:
 		fprintf(stderr, "Waiting for pipe thread to shut down.\n");
 		pthread_cond_signal(&control_pipe_cond);
 		pthread_join(control_pipe_thread, NULL);
-	}
-
-	if (port) {
-		fprintf(stderr, "Waiting for net socket thread to shut down.\n");
-		pthread_cond_signal(&net_ctl_cond);
-		pthread_join(net_ctl_thread, NULL);
 	}
 
 	pthread_attr_destroy(&attr);
