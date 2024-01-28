@@ -1,26 +1,8 @@
-/*
- * mpxgen - FM multiplex encoder with Stereo and RDS
- * Copyright (C) 2021 Anthony96922
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "common.h"
 #include "rds.h"
 
 /*
- * Stuff common for both RDS and RDS2
+ * Stuff common for RDS
  *
  */
 
@@ -206,44 +188,18 @@ uint16_t crc16(uint8_t *data, size_t len) {
 }
 
 /* Calculate the checkword for each block and emit the bits */
-#ifdef RDS2
-void add_checkwords(uint16_t *blocks, uint8_t *bits, bool rds2)
-#else
 void add_checkwords(uint16_t *blocks, uint8_t *bits)
-#endif
 {
 	size_t i, j;
 	uint8_t bit, msb;
 	uint16_t block, block_crc, check, offset_word;
 	bool group_type_b = false;
-#ifdef RDS2
-	bool tunneling_type_b = false;
-#endif
 
 	/* if b11 is 1, then type B */
-#ifdef RDS2
-	if (!rds2 && IS_TYPE_B(blocks))
-#else
 	if (IS_TYPE_B(blocks))
-#endif
 		group_type_b = true;
 
-#ifdef RDS2
-	/* for when version B groups are coded in RDS2 */
-	if (rds2 && IS_TUNNELING(blocks) && IS_TYPE_B(blocks))
-		tunneling_type_b = true;
-#endif
-
 	for (i = 0; i < GROUP_LENGTH; i++) {
-#ifdef RDS2
-		/*
-		 * If tunneling type B groups use offset
-		 * word C' for block 3
-		 */
-		if (rds2 && i == 2 && tunneling_type_b) {
-			offset_word = offset_words[4];
-		} else
-#endif
 		/* Group version B needs C' for block 3 */
 		if (i == 2 && group_type_b) {
 			offset_word = offset_words[4];
