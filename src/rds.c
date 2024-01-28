@@ -298,7 +298,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
  * This generates sequences of the form 0A, 2A, 0A, 2A, 0A, 2A, etc.
  */
 static void get_rds_group(uint16_t *blocks) {
-	static uint8_t state;
+	static uint8_t group_counter;
 
 	/* Basic block data */
 	blocks[0] = rds_data.pi;
