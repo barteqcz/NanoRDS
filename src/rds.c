@@ -262,11 +262,13 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	static uint8_t group_counter[GROUP_15B];
 
 	/* Type 3A groups */
-	if (oda_state.count) {
-		if (++group_counter[GROUP_3A] >= 20) {
-			group_counter[GROUP_3A] = 0;
-			get_rds_oda_group(blocks);
-			return 1;
+	if (rtplus_cfg.running) {
+		if (oda_state.count) {
+			if (++group_counter[GROUP_3A] >= 20) {
+				group_counter[GROUP_3A] = 0;
+				get_rds_oda_group(blocks);
+				return 1;
+			}
 		}
 	}
 
@@ -281,10 +283,12 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	}
 
 	/* RT+ groups */
-	if (++group_counter[rtplus_cfg.group] >= 30) {
-		group_counter[rtplus_cfg.group] = 0;
-		get_rds_rtplus_group(blocks);
-		return 1;
+	if (rtplus_cfg.running) {
+		if (++group_counter[rtplus_cfg.group] >= 30) {
+			group_counter[rtplus_cfg.group] = 0;
+			get_rds_rtplus_group(blocks);
+			return 1;
+		}
 	}
 
 	return 0;
@@ -306,17 +310,19 @@ static void get_rds_group(uint16_t *blocks) {
 	/* Generate block content */
 	/* CT (clock time) has priority on other group types */
 	if (!(rds_data.tx_ctime && get_rds_ct_group(blocks))) {
-		if (!get_rds_other_groups(blocks)) { /* Other groups */
-			/* These are always transmitted */
-			if (!state) { /* Type 0A groups */
-				get_rds_ps_group(blocks);
-				state++;
-			} else { /* Type 2A groups */
-				get_rds_rt_group(blocks);
-				if (!rds_state.rt_bursting) state++;
-			}
-			if (state == 2) state = 0;
-		}
+        if (!get_rds_other_groups(blocks)) { // Other groups
+            // These are always transmitted
+            if (group_counter < 4) { // Send four 2A groups
+                get_rds_rt_group(blocks);
+            } else { // After four 2A groups, send four 0A groups
+                get_rds_ps_group(blocks);
+            }
+
+            group_counter++;
+            if (group_counter == 8) {
+                group_counter = 0;  // Reset counter after sending eight groups
+            }
+        }
 	}
 
 	/* for version B groups */
