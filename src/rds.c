@@ -102,8 +102,16 @@ static void get_rds_ps_group(uint16_t *blocks) {
 	if (ps_state == 4) ps_state = 0;
 }
 
+/* ECC group (1A)*/
 static void get_rds_ecc_group(uint16_t *blocks) {
-	static
+	blocks[1] |= 1 << 12;
+	blocks[2] |= rds_data.ecc;
+}
+
+/* LIC group (1A)*/
+static void get_rds_ecc_group(uint16_t *blocks) {
+	blocks[1] |= 1 << 12;
+	blocks[2] |= rds_data.lic;
 }
 
 /* RT group (2A)
@@ -358,7 +366,7 @@ void set_rds_ecc(uint16_t ecc_code) {
 }
 
 void set_rds_lic(uint16_t lic_code) {
-	rds_data.lic = lic_code;
+	rds_data.lic = lic_code | 0x3000;
 }
 
 void set_rds_rt(unsigned char *rt) {
