@@ -102,6 +102,10 @@ static void get_rds_ps_group(uint16_t *blocks) {
 	if (ps_state == 4) ps_state = 0;
 }
 
+static void get_rds_ecc_group(uint16_t *blocks) {
+	static
+}
+
 /* RT group (2A)
  */
 static void get_rds_rt_group(uint16_t *blocks) {
@@ -322,6 +326,8 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	}
 
 	set_rds_pi(rds_params.pi);
+	set_rds_ecc(rds_params.ecc);
+	set_rds_lic(rds_params.lic);
 	set_rds_ps(rds_params.ps);
 	rds_state.ab = 1;
 	set_rds_rt(rds_params.rt);
@@ -345,6 +351,14 @@ void exit_rds_encoder() {
 
 void set_rds_pi(uint16_t pi_code) {
 	rds_data.pi = pi_code;
+}
+
+void set_rds_ecc(uint16_t ecc_code) {
+	rds_data.ecc = ecc_code;
+}
+
+void set_rds_lic(uint16_t lic_code) {
+	rds_data.lic = lic_code;
 }
 
 void set_rds_rt(unsigned char *rt) {
