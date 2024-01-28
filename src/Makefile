@@ -4,12 +4,12 @@ name = micrords
 
 # NRSC RBDS (FCC)
 # Set to 1 for NRSC LF/MF AF coding and PTY list
-RBDS = 1
+RBDS = 0
 
 CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -std=c18
 
-obj = minirds.o waveforms.o rds.o fm_mpx.o control_pipe.o osc.o resampler.o modulator.o lib.o net.o ascii_cmd.o
+obj = minirds.o waveforms.o rds.o fm_mpx.o control_pipe.o osc.o resampler.o modulator.o lib.o ascii_cmd.o
 libs = -lm -lsamplerate -lpthread -lao
 
 ifeq ($(RBDS), 1)

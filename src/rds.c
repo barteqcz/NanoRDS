@@ -114,8 +114,7 @@ static void get_rds_lic_group(uint16_t *blocks) {
 	blocks[2] |= rds_data.lic;
 }
 
-/* RT group (2A)
- */
+/* RT group (2A) */
 static void get_rds_rt_group(uint16_t *blocks) {
 	static unsigned char rt_text[RT_LENGTH];
 	static uint8_t rt_state;
@@ -141,8 +140,7 @@ static void get_rds_rt_group(uint16_t *blocks) {
 	if (rt_state == rds_state.rt_segments) rt_state = 0;
 }
 
-/* ODA group (3A)
- */
+/* ODA group (3A) */
 static void get_rds_oda_group(uint16_t *blocks) {
 	blocks[1] |= 3 << 12;
 
@@ -159,8 +157,7 @@ static void get_rds_oda_group(uint16_t *blocks) {
 }
 
 /* Generates a CT (clock time) group if the minute has just changed
- * Returns 1 if the CT group was generated, 0 otherwise
- */
+ * Returns 1 if the CT group was generated, 0 otherwise */
 static uint8_t get_rds_ct_group(uint16_t *blocks) {
 	static uint8_t latest_minutes;
 	struct tm *utc, *local_time;
@@ -204,8 +201,7 @@ static uint8_t get_rds_ct_group(uint16_t *blocks) {
 	return 0;
 }
 
-/* PTYN group (10A)
- */
+/* PTYN group (10A) */
 static void get_rds_ptyn_group(uint16_t *blocks) {
 	static unsigned char ptyn_text[PTYN_LENGTH];
 	static uint8_t ptyn_state;
@@ -231,8 +227,7 @@ static void init_rtplus(uint8_t group) {
 	rtplus_cfg.group = group;
 }
 
-/* RT+ group
- */
+/* RT+ group */
 static void get_rds_rtplus_group(uint16_t *blocks) {
 	/* RT+ block format */
 	blocks[1] |= GET_GROUP_TYPE(rtplus_cfg.group) << 12;
@@ -250,17 +245,18 @@ static void get_rds_rtplus_group(uint16_t *blocks) {
 	blocks[3] |= rtplus_cfg.len[1] & INT8_L5;
 }
 
-/* Lower priority groups are placed in a subsequence
- */
+/* Lower priority groups are placed in a subsequence */
 static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	static uint8_t group_counter[GROUP_15B];
 
 	/* Type 3A groups */
-	if (oda_state.count) {
-		if (++group_counter[GROUP_3A] >= 20) {
-			group_counter[GROUP_3A] = 0;
-			get_rds_oda_group(blocks);
-			return 1;
+	if (rtplus_cfg.running) {
+		if (oda_state.count) {
+			if (++group_counter[GROUP_3A] >= 20) {
+				group_counter[GROUP_3A] = 0;
+				get_rds_oda_group(blocks);
+				return 1;
+			}
 		}
 	}
 
@@ -275,10 +271,12 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	}
 
 	/* RT+ groups */
-	if (++group_counter[rtplus_cfg.group] >= 30) {
-		group_counter[rtplus_cfg.group] = 0;
-		get_rds_rtplus_group(blocks);
-		return 1;
+	if (rtplus_cfg.running) {
+		if (++group_counter[rtplus_cfg.group] >= 30) {
+			group_counter[rtplus_cfg.group] = 0;
+			get_rds_rtplus_group(blocks);
+			return 1;
+		}
 	}
 
 	return 0;
