@@ -1,27 +1,6 @@
-/*
- * mpxgen - FM multiplex encoder with Stereo and RDS
- * Copyright (C) 2019 Anthony96922
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include "common.h"
 #include "rds.h"
 #include "modulator.h"
-#ifdef RDS2
-#include "rds2.h"
-#endif
 #include "lib.h"
 
 static struct rds_params_t rds_data;
@@ -34,15 +13,6 @@ static struct {
 	uint8_t rt_segments;
 	uint8_t rt_bursting;
 	uint8_t ptyn_update;
-
-	/* Long PS */
-	uint8_t lps_update;
-	uint8_t lps_segments;
-
-	/* eRT */
-	uint8_t ert_update;
-	uint8_t ert_segments;
-	uint8_t ert_bursting;
 } rds_state;
 
 /* ODA */
@@ -61,21 +31,6 @@ static struct {
 	uint8_t start[2];
 	uint8_t len[2];
 } rtplus_cfg;
-
-/* eRT */
-static struct {
-	uint8_t group;
-} ert_cfg;
-
-/* eRT+ */
-static struct {
-	uint8_t group;
-	uint8_t running;
-	uint8_t toggle;
-	uint8_t type[2];
-	uint8_t start[2];
-	uint8_t len[2];
-} ertplus_cfg;
 
 static void register_oda(uint8_t group, uint16_t aid, uint16_t scb) {
 
@@ -258,46 +213,10 @@ static void get_rds_ptyn_group(uint16_t *blocks) {
 	if (ptyn_state == 2) ptyn_state = 0;
 }
 
-/* Long PS group (15A) */
-static void get_rds_lps_group(uint16_t *blocks) {
-	static unsigned char lps_text[LPS_LENGTH];
-	static uint8_t lps_state;
-
-	if (lps_state == 0 && rds_state.lps_update) {
-		memcpy(lps_text, rds_data.lps, LPS_LENGTH);
-		rds_state.lps_update = 0;
-	}
-
-	blocks[1] |= 15 << 12 | lps_state;
-	blocks[2] =  lps_text[lps_state * 4    ] << 8;
-	blocks[2] |= lps_text[lps_state * 4 + 1];
-	blocks[3] =  lps_text[lps_state * 4 + 2] << 8;
-	blocks[3] |= lps_text[lps_state * 4 + 3];
-
-	lps_state++;
-	if (lps_state == rds_state.lps_segments) lps_state = 0;
-}
-
 /* RT+ */
 static void init_rtplus(uint8_t group) {
 	register_oda(group, ODA_AID_RTPLUS, 0);
 	rtplus_cfg.group = group;
-}
-
-/* eRT */
-static void init_ert(uint8_t group) {
-	if (GET_GROUP_VER(group) == 1) {
-		/* type B groups cannot be used for eRT */
-		return;
-	}
-	register_oda(group, ODA_AID_ERT, 1 /* UTF-8 */);
-	ert_cfg.group = group;
-}
-
-/* eRT+ */
-static void init_ertp(uint8_t group) {
-	register_oda(group, ODA_AID_ERTPLUS, 0);
-	ertplus_cfg.group = group;
 }
 
 /* RT+ group
@@ -317,49 +236,6 @@ static void get_rds_rtplus_group(uint16_t *blocks) {
 	blocks[3] =  (rtplus_cfg.type[1] & INT8_L5) << 11;
 	blocks[3] |= (rtplus_cfg.start[1] & INT8_L6) << 5;
 	blocks[3] |= rtplus_cfg.len[1] & INT8_L5;
-}
-
-/* eRT group */
-static void get_rds_ert_group(uint16_t *blocks) {
-	static unsigned char ert_text[ERT_LENGTH];
-	static uint8_t ert_state;
-
-	if (rds_state.ert_bursting) rds_state.ert_bursting--;
-
-	if (rds_state.ert_update) {
-		memcpy(ert_text, rds_data.ert, ERT_LENGTH);
-		rds_state.ert_update = 0;
-		ert_state = 0; /* rewind when new eRT arrives */
-	}
-
-	/* eRT block format */
-	blocks[1] |= GET_GROUP_TYPE(ert_cfg.group) << 12;
-	blocks[1] |= ert_state;
-	blocks[2] =  ert_text[ert_state * 4    ] << 8;
-	blocks[2] |= ert_text[ert_state * 4 + 1];
-	blocks[3] =  ert_text[ert_state * 4 + 2] << 8;
-	blocks[3] |= ert_text[ert_state * 4 + 3];
-
-	ert_state++;
-	if (ert_state == rds_state.ert_segments) ert_state = 0;
-}
-
-/* eRT+ group */
-static void get_rds_ertplus_group(uint16_t *blocks) {
-	/* RT+ block format */
-	blocks[1] |= GET_GROUP_TYPE(ertplus_cfg.group) << 12;
-	blocks[1] |= GET_GROUP_VER(ertplus_cfg.group) << 11;
-	blocks[1] |= ertplus_cfg.toggle << 4 | ertplus_cfg.running << 3;
-	blocks[1] |= (ertplus_cfg.type[0] & INT8_U5) >> 3;
-
-	blocks[2] =  (ertplus_cfg.type[0] & INT8_L3) << 13;
-	blocks[2] |= (ertplus_cfg.start[0] & INT8_L6) << 7;
-	blocks[2] |= (ertplus_cfg.len[0] & INT8_L6) << 1;
-	blocks[2] |= (ertplus_cfg.type[1] & INT8_U3) >> 5;
-
-	blocks[3] =  (ertplus_cfg.type[1] & INT8_L5) << 11;
-	blocks[3] |= (ertplus_cfg.start[1] & INT8_L6) << 5;
-	blocks[3] |= ertplus_cfg.len[1] & INT8_L5;
 }
 
 /* Lower priority groups are placed in a subsequence
@@ -393,31 +269,6 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 		return 1;
 	}
 
-	/* eRT groups */
-	if (rds_data.ert[0]) {
-		if (++group_counter[ert_cfg.group] >= 3) {
-			group_counter[ert_cfg.group] = 0;
-			get_rds_ert_group(blocks);
-			return 1;
-		}
-	}
-
-	/* eRT+ groups */
-	if (++group_counter[ertplus_cfg.group] >= 30) {
-		group_counter[ertplus_cfg.group] = 0;
-		get_rds_ertplus_group(blocks);
-		return 1;
-	}
-
-	/* Long PS groups */
-	if (rds_data.lps[0]) {
-		if (++group_counter[GROUP_15A] >= 15) {
-			group_counter[GROUP_15A] = 0;
-			get_rds_lps_group(blocks);
-			return 1;
-		}
-	}
-
 	return 0;
 }
 
@@ -425,7 +276,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
  * This generates sequences of the form 0A, 2A, 0A, 2A, 0A, 2A, etc.
  */
 static void get_rds_group(uint16_t *blocks) {
-	static uint8_t state;
+	static uint8_t group_counter;
 
 	/* Basic block data */
 	blocks[0] = rds_data.pi;
@@ -439,15 +290,16 @@ static void get_rds_group(uint16_t *blocks) {
 	if (!(rds_data.tx_ctime && get_rds_ct_group(blocks))) {
 		if (!get_rds_other_groups(blocks)) { /* Other groups */
 			/* These are always transmitted */
-			if (!state) { /* Type 0A groups */
-				get_rds_ps_group(blocks);
-				state++;
-			} else { /* Type 2A groups */
-				get_rds_rt_group(blocks);
-				if (!rds_state.rt_bursting) state++;
-			}
-			if (state == 2) state = 0;
-		}
+	        if (group_counter < 4) { // Send four 2A groups
+	            get_rds_rt_group(blocks);
+	        } else { // After four 2A groups, send four 0A groups
+	            get_rds_ps_group(blocks);
+	        }
+
+	        group_counter++;
+	        if (group_counter == 8) {
+	            group_counter = 0;  // Reset counter after sending eight groups
+	        }
 	}
 
 	/* for version B groups */
@@ -459,11 +311,7 @@ static void get_rds_group(uint16_t *blocks) {
 void get_rds_bits(uint8_t *bits) {
 	static uint16_t out_blocks[GROUP_LENGTH];
 	get_rds_group(out_blocks);
-#ifdef RDS2
-	add_checkwords(out_blocks, bits, false);
-#else
 	add_checkwords(out_blocks, bits);
-#endif
 }
 
 void init_rds_encoder(struct rds_params_t rds_params) {
@@ -488,24 +336,12 @@ void init_rds_encoder(struct rds_params_t rds_params) {
 	/* Assign the RT+ AID to group 11A */
 	init_rtplus(GROUP_11A);
 
-	/* Assign the eRT AID to group 12A */
-	init_ert(GROUP_12A);
-
-	/* Assign the eRT+ AID to group 13A */
-	init_ertp(GROUP_13A);
-
 	/* initialize modulator objects */
 	init_rds_objects();
-#ifdef RDS2
-	init_rds2_encoder();
-#endif
 }
 
 void exit_rds_encoder() {
 	exit_rds_objects();
-#ifdef RDS2
-	exit_rds2_encoder();
-#endif
 }
 
 void set_rds_pi(uint16_t pi_code) {
@@ -541,38 +377,6 @@ void set_rds_rt(unsigned char *rt) {
 	rds_state.rt_bursting = rds_state.rt_segments;
 }
 
-void set_rds_ert(unsigned char *ert) {
-	uint8_t i = 0, len = 0;
-
-	if (!ert[0]) {
-		memset(rds_data.ert, 0, ERT_LENGTH);
-		return;
-	}
-
-	rds_state.ert_update = 1;
-	memset(rds_data.ert, '\r', ERT_LENGTH);
-	while (*ert != 0 && len <= ERT_LENGTH)
-		rds_data.ert[len++] = *ert++;
-
-	if (len < ERT_LENGTH) {
-		rds_state.ert_segments = 0;
-
-		/* increment to allow adding an '\r' in all cases */
-		len++;
-
-		/* find out how many segments are needed */
-		while (i < len) {
-			i += 4;
-			rds_state.ert_segments++;
-		}
-	} else {
-		/* Default to 32 if eRT is 128 characters long */
-		rds_state.ert_segments = 32;
-	}
-
-	rds_state.ert_bursting = rds_state.ert_segments;
-}
-
 void set_rds_ps(unsigned char *ps) {
 	uint8_t len = 0;
 
@@ -580,36 +384,6 @@ void set_rds_ps(unsigned char *ps) {
 	memset(rds_data.ps, ' ', PS_LENGTH);
 	while (*ps != 0 && len <= PS_LENGTH)
 		rds_data.ps[len++] = *ps++;
-}
-
-void set_rds_lps(unsigned char *lps) {
-	uint8_t i = 0, len = 0;
-
-	if (!lps[0]) {
-		memset(rds_data.lps, 0, LPS_LENGTH);
-		return;
-	}
-
-	rds_state.lps_update = 1;
-	memset(rds_data.lps, '\r', LPS_LENGTH);
-	while (*lps != 0 && len <= LPS_LENGTH)
-		rds_data.lps[len++] = *lps++;
-
-	if (len < LPS_LENGTH) {
-		rds_state.lps_segments = 0;
-
-		/* increment to allow adding an '\r' in all cases */
-		len++;
-
-		/* find out how many segments are needed */
-		while (i < len) {
-			i += 4;
-			rds_state.lps_segments++;
-		}
-	} else {
-		/* default to 8 if LPS is 32 characters long */
-		rds_state.lps_segments = 8;
-	}
 }
 
 void set_rds_rtplus_flags(uint8_t flags) {
@@ -624,21 +398,6 @@ void set_rds_rtplus_tags(uint8_t *tags) {
 	rtplus_cfg.type[1]	= tags[3] & INT8_L6;
 	rtplus_cfg.start[1]	= tags[4] & INT8_L6;
 	rtplus_cfg.len[1]	= tags[5] & INT8_L5;
-}
-
-/* eRT+ */
-void set_rds_ertplus_flags(uint8_t flags) {
-	ertplus_cfg.running	= (flags & INT8_1) >> 1;
-	ertplus_cfg.toggle	= flags & INT8_0;
-}
-
-void set_rds_ertplus_tags(uint8_t *tags) {
-	ertplus_cfg.type[0]	= tags[0] & INT8_L6;
-	ertplus_cfg.start[0]	= tags[1] & INT8_L6;
-	ertplus_cfg.len[0]	= tags[2] & INT8_L6;
-	ertplus_cfg.type[1]	= tags[3] & INT8_L6;
-	ertplus_cfg.start[1]	= tags[4] & INT8_L6;
-	ertplus_cfg.len[1]	= tags[5] & INT8_L5;
 }
 
 void set_rds_af(struct rds_af_t new_af_list) {
