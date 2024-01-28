@@ -190,7 +190,7 @@ keep_parsing_opts:
 			memcpy(rds_params.ptyn, xlat((unsigned char *)optarg), PTYN_LENGTH);
 			break;
 
-		case 'C': /* ctl */
+		case 'c': /* ctl */
 			memcpy(control_pipe, optarg, 50);
 			break;
 
