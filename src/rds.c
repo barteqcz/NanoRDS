@@ -244,12 +244,14 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	static uint8_t group_counter[GROUP_15B];
 
 	/* Type 3A groups */
-	if (oda_state.count) {
+	if (rtplus_cfg.running) {
+	    if (oda_state.count) {
 		if (++group_counter[GROUP_3A] >= 20) {
-			group_counter[GROUP_3A] = 0;
-			get_rds_oda_group(blocks);
-			return 1;
+		    group_counter[GROUP_3A] = 0;
+		    get_rds_oda_group(blocks);
+		    return 1;
 		}
+	    }
 	}
 
 	/* Type 10A groups */
@@ -263,10 +265,12 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 	}
 
 	/* RT+ groups */
-	if (++group_counter[rtplus_cfg.group] >= 30) {
+	if (rtplus_cfg.running) {
+	    if (++group_counter[rtplus_cfg.group] >= 30) {
 		group_counter[rtplus_cfg.group] = 0;
 		get_rds_rtplus_group(blocks);
 		return 1;
+	    }
 	}
 
 	return 0;
