@@ -213,7 +213,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 
 	/* ECC (1A) */
 	if (rds_data.ecc) {
-		if (++group_counter_ecc == 20) {
+		if (++group_counter_ecc == 25) {
 			group_counter_ecc = 0;
 			get_rds_ecc_group(blocks);
 			return 1;
@@ -249,7 +249,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 
 	/* RT+ (11A) */
 	if (rtp_cfg.running || rtp_cfg.toggle) {
-		if (++group_counter_rtp == 20) {
+		if (++group_counter_rtp == 25) {
 			group_counter_rtp = 0;
 			get_rds_rtp_group(blocks);
 			return 1;
