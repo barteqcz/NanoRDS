@@ -43,8 +43,7 @@ To see available program-built-in commands, run `./micrords --help`
 
 ## Troubleshooting, help
 
-1. One thing I know about, is that when you run the encoder before you run the audio source, the audio output locks, and audio is unhearable. A workaround is to run audio source before running the encoder, and then you won't have any problems.
-2. The output volume of your subcarriers depends also on the OS output volume. I compared it to other radio stations. On my hardware, it seems that setting the OS output volume to 50% is the 'zero-point' for transmitting RDS - 4.5% is the same level as many radio stations' RDS subcarrier.
+The output volume of your subcarriers depends also on the OS output volume. I compared it to other radio stations. On my hardware, it seems that setting the OS output volume to 50% is the 'zero-point' for transmitting RDS - 4.5% is the same level as many radio stations' RDS subcarrier.
 
 ## Credits
 
