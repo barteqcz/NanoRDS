@@ -375,8 +375,8 @@ void set_rds_ps(unsigned char *ps) {
         if (remaining_spaces % 2 == 0) {
             spaces_on_left = spaces_on_right = remaining_spaces / 2;
         } else {
-            spaces_on_left = remaining_spaces / 2 + 1;
-            spaces_on_right = remaining_spaces / 2;
+            spaces_on_left = remaining_spaces / 2;
+            spaces_on_right = remaining_spaces / 2 + 1;
         }
 
         for (int i = len - 1; i >= 0; i--) {
