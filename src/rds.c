@@ -358,12 +358,35 @@ void set_rds_rt(unsigned char *rt) {
 }
 
 void set_rds_ps(unsigned char *ps) {
-	uint8_t len = 0;
+    uint8_t len = 0;
+    uint8_t spaces_on_left = 0;
+    uint8_t spaces_on_right = 0;
+    uint8_t remaining_spaces = 0;
 
-	rds_state.ps_update = 1;
-	memset(rds_data.ps, ' ', PS_LENGTH);
-	while (*ps != 0 && len <= PS_LENGTH)
-		rds_data.ps[len++] = *ps++;
+    rds_state.ps_update = 1;
+    memset(rds_data.ps, ' ', PS_LENGTH);
+
+    while (*ps != 0 && len < PS_LENGTH) {
+        rds_data.ps[len++] = *ps++;
+    }
+
+    if (len < PS_LENGTH) {
+        remaining_spaces = PS_LENGTH - len;
+        if (remaining_spaces % 2 == 0) {
+            spaces_on_left = spaces_on_right = remaining_spaces / 2;
+        } else {
+            spaces_on_left = remaining_spaces / 2;
+            spaces_on_right = remaining_spaces / 2 + 1;
+        }
+
+        for (int i = len - 1; i >= 0; i--) {
+            rds_data.ps[i + spaces_on_left] = rds_data.ps[i];
+        }
+
+        for (int i = 0; i < spaces_on_left; i++) {
+            rds_data.ps[i] = ' ';
+        }
+    }
 }
 
 void set_rds_rtp_flags(uint8_t flags) {
