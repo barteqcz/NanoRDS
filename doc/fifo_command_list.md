@@ -22,7 +22,7 @@ PS * RDS *
 By default, MicroRDS centers the PS name. So, for example, if you enter
 `PS TEST`
 the displayed PS won't be `TEST____`, but `__TEST__`. If you don't want that, just fill the remaining space with spaces
-```PS TEST\ \ \ \`
+`PS TEST\ \ \ \`
 
 &nbsp;
 
