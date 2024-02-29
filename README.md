@@ -12,6 +12,10 @@ MicroRDS is a lightweight, software RDS encoder for Linux.
 
 - Seamless script usage: Flexibility of using familiar scripting languages like Bash, Python, and more, to effortlessly control RDS through FIFO.
 
+### Plugins
+
+- [MicroRDS_SSH](https://github.com/barteqcz/MicroRDS_SSH) - This is a script in Python that connects to a remote SSH server, runs MicroRDS and controls it with a text file located on the client.
+
 ## Installation
 
 ### Dependencies
