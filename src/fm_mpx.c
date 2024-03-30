@@ -17,25 +17,14 @@ static float volumes[] = {
 };
 
 void set_carrier_volume(uint8_t carrier, uint8_t new_volume) {
-    /* don't allow Stereo pilot level to be over 18%. If higher, set to 18% */
-    if (carrier == 0) {
-        if (new_volume > 18) {
-            volumes[0] = 0.18f;
-        } else {
-            volumes[0] = (float)new_volume / 100.0f;
-        }
-    }
+	/* check for valid index */
+	if (carrier > 2) return;
 
-    /* don't allow RDS subcarrier level to be over 9%. If higher, set to 9% */
-    if (carrier == 1) {
-        if (new_volume > 9) {
-            volumes[1] = 0.18f;
-        } else {
-            volumes[1] = (float)new_volume / 100.0f * 2;
-        }
-    }
+	/* don't allow levels over 15% */
+	if (new_volume >= 15) volumes[carrier] = 0.09f;
+
+	volumes[carrier] = (float)new_volume / 100.0f;
 }
-
 
 void fm_mpx_init(uint32_t sample_rate) {
         /* initialize the subcarrier oscillators */
