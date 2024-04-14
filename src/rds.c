@@ -334,27 +334,34 @@ void set_rds_lic(uint16_t lic_code) {
 }
 
 void set_rds_rt(unsigned char *rt) {
-	uint8_t i = 0, len = 0;
+    uint8_t len = 0;
 
-	rds_state.rt_update = 1;
-	memset(rds_data.rt, ' ', RT_LENGTH);
-	while (*rt != 0 && len <= RT_LENGTH)
-		rds_data.rt[len++] = *rt++;
+    if (strlen((char*)rt) > 64) {
+        memcpy((char*)rds_data.rt, (char*)rt, 64);
+        rds_data.rt[63] = '\0'; // Ensure null termination
+    }
 
-	if (len < RT_LENGTH) {
-		rds_state.rt_segments = 0;
+    rds_state.rt_update = 1;
+    memset(rds_data.rt, ' ', RT_LENGTH);
 
-		rds_data.rt[len++] = '\r';
+    while (*rt != 0 && len < RT_LENGTH) {
+        rds_data.rt[len++] = *rt++;
+    }
 
-		while (i < len) {
-			i += 4;
-			rds_state.rt_segments++;
-		}
-	} else {
-		rds_state.rt_segments = 16;
-	}
+    if (len < RT_LENGTH) {
+        rds_state.rt_segments = 0;
+        rds_data.rt[len++] = '\r';
 
-	rds_state.rt_bursting = rds_state.rt_segments;
+        while (len % 4 != 0) { // Pad with spaces if necessary for segment alignment
+            rds_data.rt[len++] = ' ';
+        }
+
+        rds_state.rt_segments = len / 4;
+    } else {
+        rds_state.rt_segments = 16; // Maximum segments
+    }
+
+    rds_state.rt_bursting = rds_state.rt_segments;
 }
 
 void set_rds_ps(unsigned char *ps) {
