@@ -313,7 +313,6 @@ char *show_af_list(struct rds_af_t af_list) {
  * UTF-8 to RDS char set converter
  *
  * Translates certain chars into their RDS equivalents
- * NOTE!! Only applies to PS and RT. ERT uses UTF-8 (SCB = 1)
  *
  */
 #define XLATSTRLEN	255
