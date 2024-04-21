@@ -28,37 +28,6 @@ int ustrcmp(const unsigned char *s1, const unsigned char *s2) {
 	return c1 - c2;
 }
 
-/* RDS PTY list */
-static char *ptys[32] = {
-#ifdef RBDS
-	/* NRSC RBDS */
-	"None", "News", "Information", "Sports",
-	"Talk", "Rock", "Classic rock", "Adult hits",
-	"Soft rock" , "Top 40", "Country", "Oldies",
-	"Soft music", "Nostalgia", "Jazz", "Classical",
-	"R&B", "Soft R&B", "Language", "Religious music",
-	"Religious talk", "Personality", "Public", "College",
-	"Spanish talk", "Spanish music", "Hip-Hop", "Unassigned",
-	"Unassigned", "Weather", "Emergency test", "Emergency"
-#else
-	/* ETSI */
-	"None", "News", "Current affairs", "Information",
-	"Sport", "Education", "Drama", "Culture", "Science",
-	"Varied", "Pop music", "Rock music", "Easy listening",
-	"Light classical", "Serious classical", "Other music",
-	"Weather", "Finance", "Children's programs",
-	"Social affairs", "Religion", "Phone-in", "Travel",
-	"Leisure", "Jazz music", "Country music",
-	"National music", "Oldies music", "Folk music",
-	"Documentary", "Alarm test", "Alarm"
-#endif
-};
-
-char *get_pty_str(uint8_t pty_code) {
-	if (pty_code > 31) pty_code = 0;
-	return (char *)ptys[pty_code];
-}
-
 static char *rtp_content_types[64] = {
 	/* dummy */
 	"DUMMY_CLASS",
