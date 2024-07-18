@@ -67,7 +67,7 @@ static void show_help(char *name) {
                 "-T, --tp           Traffic Program\n"
                 "-P, --ptyn         Program Type Name\n"
                 "-c, --ctl          FIFO control pipe\n"
-                "-h, --help         Show this help text and exit\n",
+                "-h, --help         Show this help text and exit\n"
                 "\n",
                 name
         );
