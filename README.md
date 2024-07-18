@@ -16,6 +16,10 @@ MicroRDS is a lightweight, software RDS encoder for Linux.
 
 - [MicroRDS_SSH](https://github.com/barteqcz/MicroRDS_SSH) - This is a script in Python that connects to a remote SSH server, runs MicroRDS and controls it with a text file located on the client.
 
+### Documentation
+
+MicroRDS has its own website that contains a very extensive support and documentation. You can find it [here](https://barteqcz.github.io/MicroRDS)
+
 ## Installation
 
 ### Dependencies
@@ -41,13 +45,9 @@ Go to the `src` folder, and simply run `make`. If you want to enable RBDS, do it
 
 Once you compiled the program, use `./micrords` to run it. 
 
-To see available FIFO commands list, see [FIFO command list](https://github.com/barteqcz/MicroRDS/blob/main/doc/fifo_command_list.md)
+## Troubleshooting
 
-To see available program-built-in commands, run `./micrords --help`
-
-## Troubleshooting, help
-
-The output volume of your subcarriers depends also on the OS output volume. I compared it to other radio stations. On my hardware, it seems that setting the OS output volume to 50% is the 'zero-point' for transmitting RDS - 4.5% is the same level as many radio stations' RDS subcarrier.
+The output volume of your subcarriers depends also on the OS output volume. I compared it to other radio stations. On my hardware, it seems that setting the OS output volume to 50% is the 'zero-point' for transmitting RDS - 4.5% is the same level as many radio stations' RDS subcarriers.
 
 ## Credits
 
