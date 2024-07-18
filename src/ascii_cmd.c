@@ -121,11 +121,10 @@ void process_ascii_cmd(unsigned char *str) {
                         }
                         return;
                 }
-                if (CMD_MATCHES("MPX")) {
-                        uint8_t gains[2];
-                        if (sscanf((char *)arg, "%hhu,%hhu", &gains[0], &gains[1]) == 2) {
-                                set_carrier_volume(0, gains[0]);
-                                set_carrier_volume(1, gains[1]);
+                if (CMD_MATCHES("RDS")) {
+                        uint8_t gain;
+                        if (sscanf((char *)arg, "%hhu", &gain) == 1) {
+                            set_carrier_volume(1, gain);
                         }
                         return;
                 }
@@ -161,6 +160,7 @@ void process_ascii_cmd(unsigned char *str) {
         
         if (cmd_len == 5) {
                 cmd = str;
+                
                 if (CMD_MATCHES("RESET")) {
                         uint8_t tags[6] = {0};
                         rds_af_t new_af;
@@ -184,6 +184,19 @@ void process_ascii_cmd(unsigned char *str) {
                         set_rds_rtp_flags(0);
                         memset(&new_af, 0, sizeof(struct rds_af_t));
                         set_rds_af(new_af);
+                        return;
+                }
+        }
+        if (cmd_len > 7 && str[6] == ' ') {
+                cmd = str;
+                cmd[6] = 0;
+                arg = str + 7;
+                
+                if (CMD_MATCHES("STEREO")) {
+                        uint8_t gain;
+                        if (sscanf((char *)arg, "%hhu", &gain) == 1) {
+                            set_carrier_volume(0, gain);
+                        }
                         return;
                 }
         }
