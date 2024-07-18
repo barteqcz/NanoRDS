@@ -53,21 +53,27 @@ static void *control_pipe_worker() {
 
 static void show_help(char *name) {
         printf(
-                "Usage: %s [options]\n"
+                "\n"
+                " Usage: %s [options]\n"
                 "\n"
 #ifdef RBDS
-                "-i, --pi           Program Identification code or callsign\n"
-                "                      (PI code will be calculated from callsign)\n"
+                " -i, --pi           Program Identification code or callsign\n"
+                "                       (PI code will be calculated from callsign)\n"
 #else
-                "-i, --pi           Program Identification code\n"
+                " -i, --pi           Program Identification code\n"
 #endif
-                "-s, --ps           Program Service name\n"
-                "-r, --rt           Radio Text\n"
-                "-p, --pty          Program Type\n"
-                "-T, --tp           Traffic Program\n"
-                "-P, --ptyn         Program Type Name\n"
-                "-c, --ctl          FIFO control pipe\n"
-                "-h, --help         Show this help text and exit\n"
+                " -s, --ps           Program Service\n"
+                " -r, --rt           RadioText\n"
+                " -p, --pty          Program Type\n"
+                " -t, --tp           Traffic Program\n"
+                " -e, --ecc          ECC code\n"
+                " -l, --lic          LIC code\n"
+                " -P, --ptyn         Program Type Name\n"
+                " -S, --stereo       Stereo pilot volume\n"
+                " -R, --rds          RDS subcarrier volume\n"
+                " -c, --ctl          FIFO control pipe path (the FIFO commands are\n"
+                "                        available on the project's GitHub and website).\n"
+                " -h, --help         Show this help text and exit\n"
                 "\n",
                 name
         );
@@ -104,7 +110,7 @@ int main(int argc, char **argv) {
         pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_cond_t control_pipe_cond;
 
-        const char      *short_opt = "i:s:r:p:T:P:c:h";
+        const char      *short_opt = "i:s:r:p:t:e:l:P:S:R:c:h";
 
         struct option   long_opt[] =
         {
@@ -112,8 +118,12 @@ int main(int argc, char **argv) {
                 {"ps",          required_argument, NULL, 's'},
                 {"rt",          required_argument, NULL, 'r'},
                 {"pty",         required_argument, NULL, 'p'},
-                {"tp",          required_argument, NULL, 'T'},
+                {"tp",          required_argument, NULL, 't'},
+                {"ecc",         required_argument, NULL, 'e'},
+                {"lic",         required_argument, NULL, 'l'},
                 {"ptyn",        required_argument, NULL, 'P'},
+                {"stereo",      required_argument, NULL, 'S'},
+                {"rds",         required_argument, NULL, 'R'},
                 {"ctl",         required_argument, NULL, 'c'},
                 {"help",        no_argument, NULL, 'h'},
                 { 0,            0,              0,      0 }
@@ -137,31 +147,47 @@ keep_parsing_opts:
                                 rds_params.pi = strtoul(optarg, NULL, 16);
                         break;
 
-                case 's': /* ps */
+                case 's': /* PS */
                         memcpy(rds_params.ps, xlat((unsigned char *)optarg), PS_LENGTH);
                         break;
 
-                case 'r': /* rt */
+                case 'r': /* RT */
                         memcpy(rds_params.rt, xlat((unsigned char *)optarg), RT_LENGTH);
                         break;
 
-                case 'p': /* pty */
+                case 'p': /* PTY */
                         rds_params.pty = strtoul(optarg, NULL, 10);
                         break;
 
-                case 'T': /* tp */
+                case 't': /* TP */
                         rds_params.tp = strtoul(optarg, NULL, 10);
                         break;
-
-                case 'P': /* ptyn */
-                        memcpy(rds_params.ptyn, xlat((unsigned char *)optarg), PTYN_LENGTH);
+                        
+                case 'e': /* ECC */
+                        rds_params.ecc = strtoul(optarg, NULL, 16);
+                        break;
+                        
+                case 'l': /* LIC */
+                        rds_params.lic = strtoul(optarg, NULL, 16);
                         break;
 
-                case 'c': /* ctl */
+                case 'P': /* PTYN */
+                        memcpy(rds_params.ptyn, xlat((unsigned char *)optarg), PTYN_LENGTH);
+                        break;
+                
+                case 'S': /* Stereo pilot */
+                        set_carrier_volume(0, atoi(optarg));
+                        break;
+
+                case 'R': /* RDS subcarrier */
+                        set_carrier_volume(1, atoi(optarg));
+                        break;
+
+                case 'c': /* FIFO pipe */
                         memcpy(control_pipe, optarg, 50);
                         break;
 
-                case 'h': /* help */
+                case 'h': /* Help */
                 case '?':
                 default:
                         show_help(argv[0]);
