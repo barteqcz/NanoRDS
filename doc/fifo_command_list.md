@@ -139,14 +139,19 @@ DI 1
 
 &nbsp;
 
-`MPX` - controls subcarriers volume. The first number is Stereo pilot strength, the second one controls RDS carrier strength. For example, this will set Stereo pilot level to 9%, and RDS subcarrier level to 4.5%
+`STEREO` - controls the stereo pilot volume.
 ```
-MPX 9,4.5
+STEREO 9
 ```
-If you want to disable Stereo pilot or RDS carrier, simply set its value to 0. For example this, will turn Stereo pilot off
+If you want to disable the Stereo pilot, simply set its value to 0.
+
+&nbsp;
+
+`RDS` - controls the RDS subcarrier volume.
 ```
-MPX 0,9
+RDS 4.5
 ```
+If you want to disable the RDS subcarrier, simply set its value to 0.
 
 &nbsp;
 
