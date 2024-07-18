@@ -68,6 +68,7 @@ static void show_help(char *name) {
                 "-P, --ptyn         Program Type Name\n"
                 "-c, --ctl          FIFO control pipe\n"
                 "-h, --help         Show this help text and exit\n",
+                "\n",
                 name
         );
 }
@@ -77,7 +78,7 @@ int main(int argc, char **argv) {
         char control_pipe[51];
         struct rds_params_t rds_params = {
                 .ps = "MicroRDS",
-                .rt = "MicroRDS: Software RDS encoder for Linux",
+                .rt = "MicroRDS - Software RDS encoder for Linux",
                 .pi = 0x1000
         };
 
