@@ -166,7 +166,7 @@ void process_ascii_cmd(unsigned char *str) {
                         rds_af_t new_af;
                         struct rds_params_t rds_params = {
                             .ps = "MicroRDS",
-                            .rt = "MicroRDS: Software RDS encoder for Linux",
+                            .rt = "MicroRDS - software RDS encoder for Linux",
                             .pi = 0x1000
                         };
 
