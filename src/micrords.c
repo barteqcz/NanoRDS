@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
         char control_pipe[51];
         struct rds_params_t rds_params = {
                 .ps = "MicroRDS",
-                .rt = "MicroRDS - Software RDS encoder for Linux",
+                .rt = "MicroRDS - software RDS encoder for Linux",
                 .pi = 0x1000
         };
 
