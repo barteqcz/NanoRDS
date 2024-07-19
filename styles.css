@@ -51,7 +51,6 @@ footer {
 }
 
 .codebox {
-    border: 1px solid #ffffff;
     background-color: #2e3037;
     overflow: auto;    
     padding: 10px;
