@@ -8,20 +8,20 @@ obj = nanords.o waveforms.o rds.o fm_mpx.o control_pipe.o osc.o resampler.o modu
 libs = -lm -lsamplerate -lpthread -lao
 
 ifeq ($(RBDS), 1)
-	    CFLAGS += -DRBDS
+	CFLAGS += -DRBDS
 endif
 
 ifeq ($(CONTROL_PIPE_MESSAGES), 1)
-	    CFLAGS += -DCONTROL_PIPE_MESSAGES
+	CFLAGS += -DCONTROL_PIPE_MESSAGES
 endif
 
 all: nanords
 
 nanords: $(obj)
-	    $(CC) $(obj) $(libs) -o nanords -s
+	$(CC) $(obj) $(libs) -o nanords -s
 
 clean:
-	    rm -f *.o nanords
+	rm -f *.o nanords
 
 install: check_root nanords
         chmod 755 nanords
