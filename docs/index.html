@@ -19,6 +19,7 @@
         <div class="header-container">
             <a href="../index.html"><img style="margin-top: 3px;" src="../imgs/nanords.png" width="50px" height="50px"></a>
             <nav class="menu-desktop">
+                <a class="hover-underline-animation" href="#installation"><b>Installation</b></a>
                 <a class="hover-underline-animation" href="#cli-arguments"><b>Command-line arguments</b></a>
                 <a class="hover-underline-animation" href="#fifo-creation"><b>FIFO creation</b></a>
                 <a class="hover-underline-animation" href="#fifo-commands"><b>FIFO Commands</b></a>
@@ -29,6 +30,7 @@
     </header>
     <main>
         <div id="myLinks" onclick="hamburgerMenu()">
+            <a href="#installation"><b>Installation</b></a>
             <a href="#cli-arguments"><b>Command-line arguments</b></a>
             <a href="#fifo-creation"><b>FIFO creation</b></a>
             <a href="#fifo-commands"><b>FIFO Commands</b></a>
@@ -38,17 +40,39 @@
             <div class="documentation">
                 <h1>Documentation</h1>
                 <p>This is the documentation for NanoRDS</p><br><br>
-                <h2 id="cli-arguments" style="scroll-margin-top: 150px;">Command-line arguments</h2>
+                <h2 id="installation" style="margin-top: 15px; font-size: 40px; scroll-margin-top: 150px;">Installation</h1>
+                <h2>Dependencies</h2>
+                <p style="margin-bottom: 40px;">NanoRDS needs a few dependency packages in order to work.</p>
+                <p style="margin-bottom: 5px;"><b>Debian-based distros:</b></p><div class="codebox"><code>sudo apt install libao-dev libsamplerate0-dev</code></div>
+                <p style="margin-bottom: 5px; margin-top: 40px;"><b>Arch-based distros:</b></p><div class="codebox"><code>sudo pacman -S libao libsamplerate</code></div>
+                <p style="margin-bottom: 5px; margin-top: 40px;"><b>Fedora-based distros:</b></p><div class="codebox"><code>sudo dnf install libao-devel libsamplerate-devel</code></div>
+                <h2 style="margin-top: 60px;">Downloading</h2>
+                <p style="margin-bottom: 5px;">You can either download the software using the download button on this website, or using git:</p>
+                <div class="codebox"><code>git clone https://github.com/barteqcz/NanoRDS</code></div>
+                <h2 style="margin-top: 60px;">Compilation</h2>
+                <p style="margin-bottom: 20px;">The Makefile shipped with NanoRDS provides a few options:</p>
+                <ul>
+                    <li><code><b>make</b></code> - compiles the program.</li>
+                    <li><code><b>make install</b></code> - compiles the program and installs it system-wide, so that running <code>nanords</code> anywhere in the system, runs the encoder.</li>
+                    <li><code><b>make uninstall</b></code> - uninstalls the program system-wide, so that running <code>nanords</code> anywhere in the system, won't run the encoder anymore.</li>
+                    <li><code><b>make clean</b></code> - removes all the .o files and the executable file from NanoRDS directory.</li>
+                </ul>
+                <p style="margin-top: 40px; margin-bottom: 5px;">To run the encoder that was installed system-wide, run this anywhere:</p>
+                <div class="codebox"><code>nanords</code></div><br><br>
+                <p style="margin-bottom: 5px;">To run the encoder that wasn't installed system-wide, run this in the NanoRDS directory:</p>
+                <div class="codebox"><code>./nanords</code></div>
+                <p style="margin-top: 40px; font-size: 18px;"><b>Notice</b>: both <b><code>make install</code></b> and <b><code>make uninstall</code></b> have to be run as root (e.g. <b><code>sudo make install</code></b> or <b><code>sudo make uninstall</code></b>)</p>
+                <h1 id="cli-arguments" style="scroll-margin-top: 150px; margin-top: 60px;">Command-line arguments</h1>
                 <p>To list all the available command-line arguments, run:</p>
-                <div class="codebox"><code>./nanords -h</code></div><br><br>
-                <h2 id="fifo-creation" style="scroll-margin-top: 150px;">FIFO creation</h2>
+                <div class="codebox"><code>nanords -h</code></div>
+                <h1 id="fifo-creation" style="scroll-margin-top: 150px; margin-top: 60px;">FIFO creation</h1>
                 <p>Create the control pipe:</p>
                 <div class="codebox"><code>mkfifo rdsfifo</code></div><br>
                 <p>Run NanoRDS with the appropriate flag:</p>
-                <div class="codebox"><code>./nanords --ctl rdsfifo</code></div><br>
+                <div class="codebox"><code>nanords --ctl rdsfifo</code></div><br>
                 <p>Now you can send commands to fifo, to control the RDS (manually, or using some automated script). Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored.</p>
                 <p><b>Notice</b>: If you create the FIFO pipe in a directory other than where the NanoRDS executable is located, be sure to specify the full path to the FIFO pipe when running NanoRDS.</p>
-                <h2 id="fifo-commands" style="scroll-margin-top: 150px; margin-top: 60px;">FIFO Commands</h2>
+                <h1 id="fifo-commands" style="scroll-margin-top: 150px; margin-top: 60px;">FIFO Commands</h1>
                 <p><b>PS</b> - stands for Program Service name and it allows to broadcast a 'title' for the station that is displayed on every receiver with RDS support (that's the most basic feature). Its length can be up to 8 characters. This is how you can set it in NanoRDS via fifo</p>
                 <div class="codebox"><code>PS * RDS *</code></div><br><br>
                 <p><b>RT</b> - stands for RadioText and is basically a longer message that is displayed in most RDS receivers. It can contain up to 64 characters, and here's how you can set it</p>
