@@ -46,9 +46,9 @@
                 <div class="codebox"><code>mkfifo rdsfifo</code></div><br>
                 <p>Run NanoRDS with the appropriate flag:</p>
                 <div class="codebox"><code>./nanords --ctl rdsfifo</code></div><br>
-                <p>Now you can send commands to fifo, to control the RDS (manually, or using some automated script). Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored.</p><br><br>
+                <p>Now you can send commands to fifo, to control the RDS (manually, or using some automated script). Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored.</p>
                 <p><b>Notice</b>: If you create the FIFO pipe in a directory other than where the NanoRDS executable is located, be sure to specify the full path to the FIFO pipe when running NanoRDS.</p>
-                <h2 id="fifo-commands" style="scroll-margin-top: 150px;">FIFO Commands</h2>
+                <h2 id="fifo-commands" style="scroll-margin-top: 150px; margin-top: 60px;">FIFO Commands</h2>
                 <p><b>PS</b> - stands for Program Service name and it allows to broadcast a 'title' for the station that is displayed on every receiver with RDS support (that's the most basic feature). Its length can be up to 8 characters. This is how you can set it in NanoRDS via fifo</p>
                 <div class="codebox"><code>PS * RDS *</code></div><br><br>
                 <p><b>RT</b> - stands for RadioText and is basically a longer message that is displayed in most RDS receivers. It can contain up to 64 characters, and here's how you can set it</p>
