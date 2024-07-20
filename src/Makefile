@@ -11,10 +11,6 @@ ifeq ($(RBDS), 1)
 	CFLAGS += -DRBDS
 endif
 
-ifeq ($(CONTROL_PIPE_MESSAGES), 1)
-	CFLAGS += -DCONTROL_PIPE_MESSAGES
-endif
-
 all: nanords
 
 nanords: $(obj)
