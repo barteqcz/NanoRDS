@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NanoRDS - software RDS encoder for Linux">
+    <meta name="keywords" content="nanords, rds, encoder">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="NanoRDS">
+    <meta property="og:title" content="NanoRDS">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="icon" type="image/x-icon" href="imgs/favicon.ico">
+    <script src="script.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <title>NanoRDS - software RDS encoder for Linux</title>
+</head>
+<body>
+    <header class="flex-container">
+        <div class="header-container">
+            <a href="#"><img style="margin-top: 3px;" src="imgs/nanords.png" width="50px" height="50px"></a>
+            <nav class="menu-desktop">
+                <a class="hover-underline-animation" href="#features"><b>Features</b></a>
+                <a class="hover-underline-animation" href="#installation"><b>Installation</b></a>
+                <a class="hover-underline-animation" href="docs/index.html"><b>Documentation</b></a>
+            </nav>
+            <nav class="menu-mobile"><i class="fa fa-bars menu-mobile-icon" onclick="hamburgerMenu()"></i></nav>
+        </div>
+    </header>
+    <main>
+        <div id="myLinks" onclick="hamburgerMenu()">
+            <a class="hover-underline-animation" href="#features"><b>Features</b></a>
+            <a class="hover-underline-animation" href="#installation"><b>Installation</b></a>
+            <a class="hover-underline-animation" href="docs/index.html"><b>Documentation</b></a>
+        </div>
+        <div id="explanation">
+            <i class="fa-regular fa-circle-xmark" onclick="closeExplanation()"></i>
+            <h4>Why has the name of the project changed?</h4>
+            <p>The project name has been changed because I discovered an older project with the same name. </p>
+            <p>Since they were first, it was only fair to choose a new name for mine.</p>
+            <p style="margin-top: 15px;"><b>Welcome NanoRDS!</b></p>
+        </div>
+        <div id="main1">
+            <div class="tx-main">
+                <div class="tx"></div>
+                <div class="description">
+                    <h1>NanoRDS</h1>
+                    <p>Software RDS encoder for Linux</p>
+                    <a style="margin-top: 55px;" href="https://github.com/barteqcz/NanoRDS/archive/refs/heads/main.zip" class="download fadeinout"><b>Download</b></a>
+                </div>
+            </div>
+        </div>
+        <div class="vh-container"><div class="vh"></div></div>
+        <div id="main2">
+            <h1 id="features" style="margin-bottom: 60px; margin-top: 15px; font-size: 40px; scroll-margin-top: 150px;">Features</h1>
+            <div class="flex-container" style="width: 100%; justify-content: space-around;">
+                <div class="left">
+                    <img src="imgs/pioneer.jpg">
+                </div>
+                <div class="right">
+                    <ul>
+                        <li><b>Lightweightness:</b> Designed with efficiency in mind, NanoRDS boasts minimal resource requirements, ensuring optimal performance on a variety of hardware configurations.</li>
+                        <li><b>Extensive protocol support:</b> Built-in compatibility for PS, PTY, PI, RT, RT+, CT, PTYN, ECC, LIC, AF.</li>
+                        <li><b>Seamless script usage:</b> Flexibility of using familiar scripting languages like Bash, Python, and more, to effortlessly control RDS through FIFO.</li>
+                    </ul> 
+                </div>
+            </div>
+        </div>
+        <div class="vh-container"><div class="vh"></div></div>
+        <div id="main3">
+            <h1 id="installation" style="margin-bottom: 50px; margin-top: 15px; font-size: 40px; scroll-margin-top: 150px;">Installation</h1>
+            <div class="flex-container">
+                <h2>Dependencies</h2>
+                <p style="margin-bottom: 40px;">NanoRDS needs a few dependency packages in order to work.</p>
+                <p style="margin-bottom: 5px;"><b>Debian-based distros:</b></p><div class="codebox"><code>sudo apt install libao-dev libsamplerate0-dev</code></div>
+                <p style="margin-bottom: 5px; margin-top: 40px;"><b>Arch-based distros:</b></p><div class="codebox"><code>sudo pacman -S libao libsamplerate</code></div>
+                <p style="margin-bottom: 5px; margin-top: 40px;"><b>Fedora-based distros:</b></p><div class="codebox"><code>sudo dnf install libao-devel libsamplerate-devel</code></div>
+                <h2 style="margin-top: 60px;">Downloading</h2>
+                <p style="margin-bottom: 5px;">You can either download the software using the download button on this website, or using git:</p>
+                <div class="codebox"><code>git clone https://github.com/barteqcz/NanoRDS</code></div>
+                <h2 style="margin-top: 60px;">Compilation</h2>
+                <p style="margin-bottom: 40px;">Go to the src folder, and simply run make. If you want to enable RBDS, edit the Makefile accordingly - do it before running make.</p>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="flex-container">
+            <a style="margin-right: 30px;" class="fadeinout" href="https://github.com/barteqcz/NanoRDS" target="_blank"><img src="imgs/github-mark-white.svg" width="50px"></a>
+            <a class="fadeinout" href="https://buymeacoffee.com/barteqcz" target="_blank"><img src="imgs/bmc.png" width="50px"></a>
+        </div>
+        <p>2024 by barteqcz</p>
+    </footer>
+</body>
+</html>
