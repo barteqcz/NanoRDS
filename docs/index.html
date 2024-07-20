@@ -39,14 +39,15 @@
                 <h1>Documentation</h1>
                 <p>This is the documentation for NanoRDS</p><br><br>
                 <h2 id="cli-arguments" style="scroll-margin-top: 150px;">Command-line arguments</h2>
-                <p>To list all the available command-line arguments, run</p>
+                <p>To list all the available command-line arguments, run:</p>
                 <div class="codebox"><code>./nanords -h</code></div><br><br>
                 <h2 id="fifo-creation" style="scroll-margin-top: 150px;">FIFO creation</h2>
-                <p>Create the control pipe in the same folder NanoRDS executable file is located in:</p>
+                <p>Create the control pipe:</p>
                 <div class="codebox"><code>mkfifo rdsfifo</code></div><br>
-                <p>and run NanoRDS with the appropriate flag:</p>
+                <p>Run NanoRDS with the appropriate flag:</p>
                 <div class="codebox"><code>./nanords --ctl rdsfifo</code></div><br>
-                <p>Now you can send commands to fifo, to control RDS (manually, or using some automated script). Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored.</p><br><br>
+                <p>Now you can send commands to fifo, to control the RDS (manually, or using some automated script). Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored.</p><br><br>
+                <p><b>Notice</b>: If you create the FIFO pipe in a directory other than where the NanoRDS executable is located, be sure to specify the full path to the FIFO pipe when running NanoRDS.</p>
                 <h2 id="fifo-commands" style="scroll-margin-top: 150px;">FIFO Commands</h2>
                 <p><b>PS</b> - stands for Program Service name and it allows to broadcast a 'title' for the station that is displayed on every receiver with RDS support (that's the most basic feature). Its length can be up to 8 characters. This is how you can set it in NanoRDS via fifo</p>
                 <div class="codebox"><code>PS * RDS *</code></div><br><br>
