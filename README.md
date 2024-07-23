@@ -2,11 +2,7 @@
 
 NanoRDS is a lightweight, software RDS encoder for Linux.
 
-![MicroRDS](https://i.imgur.com/cuP0XBM.jpeg)
-
-### Why was the name changed?
-
-The project name has been changed because I discovered an older project with the same name. Since they were first, it was only fair to choose a new name for mine. **Welcome NanoRDS!**
+![NanoRDS](https://i.imgur.com/cuP0XBM.jpeg)
 
 ### Key Features:
 
