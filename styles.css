@@ -23,26 +23,6 @@ p {
   margin: 0;
 }
 
-#explanation {
-    width: 60%; /* Fix the typo here */
-    height: 150px;
-    position: fixed;
-    bottom: 10px;
-    left: 0; /* Set left to 0 */
-    right: 0; /* Set right to 0 */
-    margin: 0 auto; /* Center the element horizontally */
-    background-color: #23252b;
-    z-index: 125;
-    border-radius: 15px;
-    display: flex;
-    color: white;
-    align-items: center;
-    text-align: center;
-    flex-direction: column;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.61); backdrop-filter: blur(5px);
-}
-
 .fa-circle-xmark {
     position: absolute;
     right: 8px;
