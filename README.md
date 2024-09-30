@@ -1,4 +1,4 @@
-# NanoRDS (formerly MicroRDS)
+# NanoRDS
 
 NanoRDS is a lightweight, software RDS encoder for Linux.
 
