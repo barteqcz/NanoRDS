@@ -31,7 +31,7 @@ void set_carrier_volume(uint8_t carrier, uint8_t new_volume) {
         if (new_volume > 9) {
             volumes[1] = 0.18f;
         } else {
-            volumes[1] = (float)new_volume / 100.0f * 2;
+            volumes[1] = (float)new_volume / 100.0f;
         }
     }
 }
