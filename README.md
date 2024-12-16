@@ -14,7 +14,7 @@ NanoRDS is a lightweight, software RDS encoder for Linux.
 
 ## Documentation
 
-NanoRDS has a very extensive documentation. You can find it on its [website](https://barteqcz.github.io/NanoRDS)
+NanoRDS has a very extensive documentation. You can find it on its wiki [here](https://barteqcz.github.io/NanoRDS)
 
 ## Credits
 
