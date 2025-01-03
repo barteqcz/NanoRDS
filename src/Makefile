@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O2 -std=c18
 
 obj = nanords.o waveforms.o rds.o fm_mpx.o control_pipe.o osc.o resampler.o modulator.o lib.o ascii_cmd.o
-libs = -lm -lsamplerate -lpthread -lao
+libs = -lm -lsamplerate -lpthread -lao -lcurl
 
 ifeq ($(RBDS), 1)
 	CFLAGS += -DRBDS
