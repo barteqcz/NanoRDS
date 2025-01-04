@@ -13,7 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define CURRENT_VERSION "1.1.0"
+#define CURRENT_VERSION "1.2.0"
 
 static uint8_t stop_rds;
 
@@ -125,7 +125,6 @@ static inline void float2char2channel(
         }
 
         int main(int argc, char **argv) {
-                int opt;
                 char control_pipe[51];
                 struct rds_params_t rds_params = {
                         .ps = "NanoRDS",
