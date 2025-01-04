@@ -93,32 +93,35 @@ static inline void float2char2channel(
                 pthread_exit(NULL);
         }
 
-        static void show_help(char *name) {
+        static char* executable_name;
+
+        static void show_help() {
                 printf(
                         "\n"
                         " Usage: %s [options]\n"
                         "\n"
                         #ifdef RBDS
-                        " -i, --pi           Program Identification code or callsign\n"
-                        "                       (PI code will be calculated from callsign)\n"
+                        " --pi <value>        Program Identification code or callsign (PI code will be calculated from callsign)\n"
                         #else
-                        " -i, --pi           Program Identification code\n"
+                        " --pi <value>        Program Identification code\n"
                         #endif
-                        " -s, --ps           Program Service\n"
-                        " -r, --rt           RadioText\n"
-                        " -p, --pty          Program Type\n"
-                        " -t, --tp           Traffic Program\n"
-                        " -e, --ecc          ECC code\n"
-                        " -l, --lic          LIC code\n"
-                        " -P, --ptyn         Program Type Name\n"
-                        " -S, --stereo       Stereo pilot volume\n"
-                        " -R, --rds          RDS subcarrier volume\n"
-                        " -c, --ctl          FIFO control pipe path (the FIFO commands are\n"
-                        "                        available on the project's website).\n"
-                        " -h, --help         Show this help text and exit\n"
+                        " --ps <value>        Program Service\n"
+                        " --rt <value>        RadioText\n"
+                        " --pty <value>       Program Type\n"
+                        " --ptyn <value>      Program Type Name\n"
+                        " --ms <value>        Music/speech flag\n"
+                        " --tp <value>        Traffic Program flag\n"
+                        " --di <value>        Decoder Information\n"
+                        " --ecc <value>       ECC code\n"
+                        " --lic <value>       LIC code\n"
+                        " --stereo <value>    Stereo pilot volume\n"
+                        " --rds <value>       RDS subcarrier volume\n"
+                        " --fifo <value>      FIFO control pipe path (the FIFO commands are available on the project's website).\n"
+                        " --help              Show this help text and exit\n"
                         "\n",
-                       name
+                       executable_name
                 );
+                exit(1);
         }
 
         int main(int argc, char **argv) {
@@ -129,6 +132,8 @@ static inline void float2char2channel(
                         .rt = "NanoRDS - software RDS encoder for Linux",
                         .pi = 0x1000
                 };
+
+                executable_name = argv[0];
 
                 /* buffers */
                 float *mpx_buffer;
@@ -152,93 +157,72 @@ static inline void float2char2channel(
                 pthread_mutex_t control_pipe_mutex = PTHREAD_MUTEX_INITIALIZER;
                 pthread_cond_t control_pipe_cond;
 
-                const char      *short_opt = "i:s:r:p:t:e:l:P:S:R:c:h";
+                int option_index = 0;
 
-                struct option   long_opt[] =
-                {
-                        {"pi",          required_argument, NULL, 'i'},
-                        {"ps",          required_argument, NULL, 's'},
-                        {"rt",          required_argument, NULL, 'r'},
-                        {"pty",         required_argument, NULL, 'p'},
-                        {"tp",          required_argument, NULL, 't'},
-                        {"ecc",         required_argument, NULL, 'e'},
-                        {"lic",         required_argument, NULL, 'l'},
-                        {"ptyn",        required_argument, NULL, 'P'},
-                        {"stereo",      required_argument, NULL, 'S'},
-                        {"rds",         required_argument, NULL, 'R'},
-                        {"ctl",         required_argument, NULL, 'c'},
-                        {"help",        no_argument, NULL, 'h'},
-                        { 0,            0,              0,      0 }
+                static struct option long_options[] = {
+                        {"pi", required_argument, 0, 0},
+                        {"ps", required_argument, 0, 0},
+                        {"rt", required_argument, 0, 0},
+                        {"pty", required_argument, 0, 0},
+                        {"ptyn", required_argument, 0, 0},
+                        {"ms", required_argument, 0, 0},
+                        {"tp", required_argument, 0, 0},
+                        {"di", required_argument, 0, 0},
+                        {"ecc", required_argument, 0, 0},
+                        {"lic", required_argument, 0, 0},
+                        {"stereo", required_argument, 0, 0},
+                        {"rds", required_argument, 0, 0},
+                        {"help", no_argument, 0, 0},
+                        {0, 0, 0, 0}
                 };
 
-                memset(control_pipe, 0, 51);
+                while (1) {
+                        int c = getopt_long(argc, argv, "", long_options, &option_index);
 
-                keep_parsing_opts:
-
-                opt = getopt_long(argc, argv, short_opt, long_opt, NULL);
-                if (opt == -1) goto done_parsing_opts;
-
-                switch (opt) {
-                        case 'i': /* pi */
-                                #ifdef RBDS
-                                if (optarg[0] == 'K' || optarg[0] == 'W' ||
-                                        optarg[0] == 'k' || optarg[0] == 'w') {
-                                        rds_params.pi = callsign2pi((unsigned char *)optarg);
-                                        } else
-                                                #endif
-                                                rds_params.pi = strtoul(optarg, NULL, 16);
-                        break;
-
-                        case 's': /* PS */
-                                memcpy(rds_params.ps, xlat((unsigned char *)optarg), PS_LENGTH);
+                        if (c == -1) {
                                 break;
+                        }
 
-                        case 'r': /* RT */
-                                memcpy(rds_params.rt, xlat((unsigned char *)optarg), RT_LENGTH);
-                                break;
-
-                        case 'p': /* PTY */
-                                rds_params.pty = strtoul(optarg, NULL, 10);
-                                break;
-
-                        case 't': /* TP */
-                                rds_params.tp = strtoul(optarg, NULL, 10);
-                                break;
-
-                        case 'e': /* ECC */
-                                rds_params.ecc = strtoul(optarg, NULL, 16);
-                                break;
-
-                        case 'l': /* LIC */
-                                rds_params.lic = strtoul(optarg, NULL, 16);
-                                break;
-
-                        case 'P': /* PTYN */
-                                memcpy(rds_params.ptyn, xlat((unsigned char *)optarg), PTYN_LENGTH);
-                                break;
-
-                        case 'S': /* Stereo pilot */
-                                set_carrier_volume(0, atoi(optarg));
-                                break;
-
-                        case 'R': /* RDS subcarrier */
-                                set_carrier_volume(1, atoi(optarg));
-                                break;
-
-                        case 'c': /* FIFO pipe */
-                                memcpy(control_pipe, optarg, 50);
-                                break;
-
-                        case 'h': /* Help */
-                        case '?':
-                        default:
-                                show_help(argv[0]);
-                                return 1;
+                        switch (c) {
+                                case 0:
+                                        if (strcmp(long_options[option_index].name, "ps") == 0) {
+                                                memcpy(rds_params.ps, xlat((unsigned char *)optarg), PS_LENGTH);
+                                        } else if (strcmp(long_options[option_index].name, "rt") == 0) {
+                                                memcpy(rds_params.rt, xlat((unsigned char *)optarg), RT_LENGTH);
+                                        } else if (strcmp(long_options[option_index].name, "pty") == 0) {
+                                                rds_params.pty = strtoul(optarg, NULL, 10);
+                                        } else if (strcmp(long_options[option_index].name, "ptyn") == 0) {
+                                                memcpy(rds_params.ptyn, xlat((unsigned char *)optarg), PTYN_LENGTH);
+                                        } else if (strcmp(long_options[option_index].name, "ms") == 0) {
+                                                rds_params.ms = strtoul(optarg, NULL, 10);
+                                        } else if (strcmp(long_options[option_index].name, "tp") == 0) {
+                                                rds_params.tp = strtoul(optarg, NULL, 10);
+                                        } else if (strcmp(long_options[option_index].name, "di") == 0) {
+                                                rds_params.di = strtoul(optarg, NULL, 10);
+                                        } else if (strcmp(long_options[option_index].name, "ecc") == 0) {
+                                                rds_params.ecc = strtoul(optarg, NULL, 16);
+                                        } else if (strcmp(long_options[option_index].name, "lic") == 0) {
+                                                rds_params.lic = strtoul(optarg, NULL, 16);
+                                        } else if (strcmp(long_options[option_index].name, "stereo") == 0) {
+                                                set_carrier_volume(0, atoi(optarg));
+                                        } else if (strcmp(long_options[option_index].name, "rds") == 0) {
+                                                set_carrier_volume(1, atoi(optarg));
+                                        } else if (strcmp(long_options[option_index].name, "fifo") == 0) {
+                                                memcpy(control_pipe, optarg, 50);
+                                        } else if (strcmp(long_options[option_index].name, "help") == 0) {
+                                                show_help();
+                                        }
+                                        break;
+                                case '?':
+                                        show_help();
+                                        return 1;
+                        }
                 }
 
-                goto keep_parsing_opts;
-
-                done_parsing_opts:
+                if (argc > 1 && argv[1][0] != '\0' && argv[1][0] != '-') {
+                        printf("Invalid format. Options must start with '--'\n");
+                        exit(1);
+                }
 
                 /* Initialize pthread stuff */
                 pthread_mutex_init(&control_pipe_mutex, NULL);
