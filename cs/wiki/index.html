@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NanoRDS - softwarový RDS kóder pro Linux">
+    <meta name="keywords" content="nanords, rds, kóder">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="NanoRDS">
+    <meta property="og:title" content="NanoRDS">
+    <link rel="stylesheet" type="text/css" href="../../styles.css" />
+    <link rel="icon" type="image/x-icon" href="../../imgs/favicon.ico">
+    <script src="../../script.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <title>Wiki | NanoRDS - softwarový RDS kóder pro Linux</title>
+</head>
+<body>
+    <header class="flex-container">
+        <div class="header-container">
+            <a href="../index.html"><img style="margin-top: 3px;" src="../../imgs/nanords.png" width="50px" height="50px"></a>
+            <select onchange="window.location.href=this.value;" class="language-dropdown menu-mobile">
+                <option value="" selected>🇨🇿</option>
+                <option value="../../en/wiki/index.html">🇬🇧</option>
+            </select>
+            <div class="menu-desktop">
+                <a href="#" style="margin-right: 20px; border-bottom: 2px solid #ffffff;"><img style="width: auto; height: 30px;" src="../../imgs/cz.svg"></a>
+                <a href="../../en/wiki/index.html"><img style="width: auto; height: 30px;" src="../../imgs/en.svg"></a>
+            </div>
+            <nav class="menu-desktop">
+                <a class="hover-underline-animation" href="#installation"><b>Instalace</b></a>
+                <a class="hover-underline-animation" href="#cli-arguments"><b>CLI funkce</b></a>
+                <a class="hover-underline-animation" href="#fifo-creation"><b>Vytváření FIFO</b></a>
+                <a class="hover-underline-animation" href="#fifo-commands"><b>FIFO příkazy</b></a>
+                <a class="hover-underline-animation" href="#pty-codes"><b>PTY kódy</b></a>
+            </nav>
+            <nav class="menu-mobile"><i class="fa fa-bars menu-mobile-icon" onclick="hamburgerMenu()"></i></nav>
+        </div>
+    </header>
+    <main>
+        <div id="myLinks" onclick="hamburgerMenu()">
+            <a href="#installation"><b>Instalace</b></a>
+            <a href="#cli-arguments"><b>CLI funkce</b></a>
+            <a href="#fifo-creation"><b>Vytváření FIFO</b></a>
+            <a href="#fifo-commands"><b>FIFO příkazy</b></a>
+            <a href="#pty-codes"><b>PTY kódy</b></a>
+        </div>
+        <div id="main4">
+            <div class="documentation">
+                <h2 id="installation" style="margin-top: 15px; font-size: 40px; scroll-margin-top: 150px;">Instalace</h1>
+                <h2>Závislosti</h2>
+                <p style="margin-bottom: 40px;">NanoRDS závisí na několika balíčkách.</p>
+                <p style="margin-bottom: 5px;"><b>Distribuce založené na Debianu:</b></p><div class="codebox"><code>sudo apt install libao-dev libsamplerate0-dev</code></div>
+                <p style="margin-bottom: 5px; margin-top: 40px;"><b>Distribuce založené na Arch Linuxu:</b></p><div class="codebox"><code>sudo pacman -S libao libsamplerate</code></div>
+                <p style="margin-bottom: 5px; margin-top: 40px;"><b>Distribuce založené na Fedoře:</b></p><div class="codebox"><code>sudo dnf install libao-devel libsamplerate-devel</code></div>
+                <h2 style="margin-top: 60px;">Stahování</h2>
+                <p style="margin-bottom: 5px;">Kóder si můžete stáhnout buď skrze tlačítko na hlavní strance, nebo s použitím git:</p>
+                <div class="codebox"><code>git clone https://github.com/barteqcz/NanoRDS</code></div>
+                <h2 style="margin-top: 60px;">Kompilace</h2>
+                <p style="margin-bottom: 20px;">Soubor Makefile nabízí několik možností:</p>
+                <ul>
+                    <li><code><b>make</b></code> - kompiluje program.</li>
+                    <li><code><b>make install</b></code> - kompiluje program a instaluje ho celosystémově, díky čemu spuštění příkazu <code>nanords</code> kdekoliv v systému spouští kóder.</li>
+                    <li><code><b>make uninstall</b></code> - odinstaluje program celosystémově, takže spuštění příkazu <code>nanords</code> kdekoliv v systému už nebude kóder spouštět.</li>
+                    <li><code><b>make clean</b></code> - odstraňuje všechny .o soubory a spustitelný soubor ze složky NanoRDS.</li>
+                </ul>
+                <p style="margin-top: 40px; margin-bottom: 5px;">Pro spuštění kóderu, nainstalovaného celosystémově, spusťte níže uvedený příkaz:</p>
+                <div class="codebox"><code>nanords</code></div><br><br>
+                <p style="margin-bottom: 5px;">Pro spuštění kóderu, který nebyl nainstalován celosystémově, spusťte tento příkaz ve složce NanoRDS:</p>
+                <div class="codebox"><code>./nanords</code></div>
+                <p style="margin-top: 40px; font-size: 18px;"><b>Pozor</b>: oba <b><code>make install</code></b> a <b><code>make uninstall</code></b> musí být spuštěné jako root (např. <b><code>sudo make install</code></b> nebo <b><code>sudo make uninstall</code></b>)</p>
+                <h1 id="cli-arguments" style="scroll-margin-top: 150px; margin-top: 60px;">CLI funkce</h1>
+                <p>Pro seznam všech dostupných CLI příkazů proveďte tento příkaz:</p>
+                <div class="codebox"><code>nanords --help</code></div>
+                <h1 id="fifo-creation" style="scroll-margin-top: 150px; margin-top: 60px;">Vytváření FIFO</h1>
+                <p>Vytvořte FIFO:</p>
+                <div class="codebox"><code>mkfifo rdsfifo</code></div><br>
+                <p>Spusťte NanoRDS s příslušnou CLI opcí:</p>
+                <div class="codebox"><code>nanords --fifo rdsfifo</code></div><br>
+                <p>Teď můžete odesílat příkazy k FIFO pro ovládání RDS (manuálně, nebo s použitím nějakého zautomatizovaného skriptu). Každý řádek musí začínat správným příkazem, následovaným jedním mezerníkem a požadovanou hodnotou. Jakýkoliv jiný formát řádku je ignorován bez žádné informace.</p>
+                <p><b>Pozor</b>: Pokud vytvoříte FIFO ve složce jiné než té, ve které je lokalizován spustitelný soubor NanoRDS, pamatujte, abyste v příkazu použili plnou cestu k souboru.</p>
+                <h1 id="fifo-commands" style="scroll-margin-top: 150px; margin-top: 60px;">FIFO příkazy</h1>
+                <p><b>PS</b> - znamená Program Service a umožňuje vysílat 'název' stanice, který je zobrazován na každém přijímači podporujícím RDS (je to zakladní funkčnost). Maximální délka PS je 8 znaků. Takto můžete PS vysílat skrz FIFO</p>
+                <div class="codebox"><code>PS * RDS *</code></div><br><br>
+                <p><b>RT</b> - znamená RadioText a je v podstatě delší zprávou, která je zobrazována ve většině přijímačů podporujících RDS. Může obsahovat maximálně 64 znaků a takto ji můžete vysílat skrz FIFO</p>
+                <div class="codebox"><code>RT Toto je zpráva RadioText :)</code></div><br><br>
+                <p><b>RTPF</b> - 2-bitové čislo, použivané když chcete vysílat RT+. Nastavuje RT+ příznaky - 'running' a 'toggle'</p>
+                <ul>
+                    <li>RTPF 0 - deaktivuje oba příznaky,</li>
+                    <li>RTPF 1 - nastaví 'toggle' příznak,</li>
+                    <li>RTPF 2 - nastaví 'running' příznak,</li>
+                    <li>RTPF 3 - nastaví oba příznaky,</li>
+                </ul>
+                <p>Příklad použití:</p>
+                <div class="codebox"><code>RTPF 2</code></div><br><br>
+                <p><b>RTP</b> - dodavá data pro skupiny RT+ (v NanoRDS, RT+ je vysílán ve skupině 11A). Format příkazu:</p>
+                <div class="codebox"><code>typ obsahu 1, start 1, délka 1, typ obsahu 2, start 2, délka 2</code></div><br>
+                <p>Bere data z RT. Příklad použití:</p>
+                <div class="codebox"><code>RTP 4,0,6,1,9,8</code></div><br><br>
+                <p><b>PTY</b> - definuje Program Type, v podstatě to, jaký obsah vysílá vaše stanice. V NanoRDS je PTY nastavované pomocí příkazu s příslušným kódem</p>
+                <div class="codebox"><code>PTY 10</code></div>
+                <p><b>Pozor</b>: seznam všech kódů PTY najdete <a style="color: white;" href="#pty-codes">tady</a></p><br><br>
+                <p><b>PTYN</b> - v podstatě rozšíření PTY. Schopné obsahovat maximálně 8 znaků, obvykle používané pro přidání nějakých dodatečných informací o obsahu vysílání stanice.</p>
+                <div class="codebox"><code>PTYN CHR</code></div><br><br>
+                <p><b>PI</b> - Program Identification je unikátní 16-bitový hexadecimalní 4-znakový kód, ktérý identifikuje stanicí. Takto ho můžete nastavit v NanoRDS skrz FIFO</p>
+                <div class="codebox"><code>PI 2F08</code></div><br><br>
+                <p><b>AF</b> - AF znamená Alternative Frequencies a umožňuje přijímači přepinat frekvence když signál slabne, mezi těmi, které naznačite. AF má dvě metody - NanoRDS využivá <b>metodu A,</b>která se obvykle používá - je pohodlnější a jednodušší</p>
+                <p>Takto můžete používat AF v NanoRDS. Existuje doporučení, aby první frekvence na seznamu byla frekvencí aktuálně nastavovaného vysílače.</p>
+                <div class="codebox"><code>AF s 105.1 87.7 96.4</code></div><br>
+                <p>Jestli chcete vymazat AF seznam, použijte</p>
+                <div class="codebox"><code>AF c</code></div><br><br>
+                <p><b>ECC</b> - 8-bitový hexadecimální kód, který definuje zemi původu stanice. Může být stejný pro mnoho zemí, protože druhá podmínka pro identifikaci zemí je PI kód. Pokud chcete tuto funkci vypnout, nastavte její hodnotu na 0.</p>
+                <div class="codebox"><code>ECC E2</code></div><br><br>
+                <p><b>LIC</b> - 8-bitový hexadecimální kód, který definuje jazyk stanice. Pokud chcete tuto funkci vypnout, nastavte její hodnotu na 0.</p>
+                <div class="codebox"><code>LIC 06</code></div><br><br>
+                <p><b>MS</b> - music/speech příznak. Hudba je 1 a řeč je 0.</p>
+                <div class="codebox"><code>MS 1</code></div><br><br>
+                <p><b>TP</b> - Traffic Program příznak. Definuje, zda stanice vysílá dopravní informace. Pokud ano, je nastaveno na 1; pokud ne, je nastaveno na 0.</p>
+                <div class="codebox"><code>TP 1</code></div><br><br>
+                <p><b>TA</b> - Traffic Announcement příznak - signalizuje, že dopravní informace jsou vysílány právě v této chvíli.</p>
+                <div class="codebox"><code>TA 1</code></div><br><br>
+                <p><b>DI</b> - Decoder Information - umožňuje signalizování podrobností kóderu dekóderovi, což usnadňuje dekódování signálu RDS. Dodatečně určuje, zda stanice vysílá statické, nebo dynamické PTY.</p>
+                <div class="codebox"><code>DI 1</code></div><br><br>
+                <p><b>STEREO</b> - umožňuje ovládání hlasitosti subnosné Stereo</p>
+                <div class="codebox"><code>STEREO 9</code></div>
+                <p>Pokud chcete vypnout subnosnou Stereo, jednoduše nastavte její hodnotu na 0.</p><br>
+                <p><b>RDS</b> - umožňuje ovládání hlasitosti subnosné RDS</p>
+                <div class="codebox"><code>RDS 4.5</code></div>
+                <p>Pokud chcete vypnout subnosnou RDS, jednoduše nastavte její hodnotu na 0.</p>
+                <p><b>Pozor</b>: úrovně RDS a stereo subnosných budou přesné pouze v případě, že je výstupní hlasitost vašeho systému nastavena na 0dB.</p><br>
+                <p><b>RESET</b> - nevyžaduje žádné dodatečné opce - resetuje všechna nastavení kóderu do výchozích.</p>
+                <div class="codebox"><code>RESET</code></div><br><br>
+                <h2 id="pty-codes" style="scroll-margin-top: 150px;">PTY kódy</h2>
+                <div style="width: 300px;">
+                    <label class="toggleSwitch nolabel" onclick="">
+                        <input id="rds-type-toggle" type="checkbox">
+                        <a></a>
+                        <span>
+                            <span class="left-span">RDS</span>
+                            <span class="right-span">RBDS</span>
+                        </span>											
+                    </label>
+                </div>
+        
+                <div id="rds">
+                    <h3>PTY kódy pro RDS</h3>
+                    <div class="flex-container pty-codes-list">
+                        <ul>
+                            <li>0 - Undefined</li>
+                            <li>1 - News</li>
+                            <li>2 - Current affairs</li>
+                            <li>3 - Information</li>
+                            <li>4 - Sport</li>
+                            <li>5 - Education</li>
+                            <li>6 - Drama</li>
+                            <li>7 - Culture</li>
+                            <li>8 - Science</li>
+                            <li>9 - Varied</li>
+                            <li>10 - Pop music</li>
+                        </ul>
+                        <ul>
+                            <li>11 - Rock music</li>
+                            <li>12 - Easy listening</li>
+                            <li>13 - Light classical</li>
+                            <li>14 - Serious classical</li>
+                            <li>15 - Other music</li>
+                            <li>16 - Weather</li>
+                            <li>17 - Finance</li>
+                            <li>18 - Children's programmes</li>
+                            <li>19 - Social affairs</li>
+                            <li>20 - Religion</li>
+                            <li>21 - Phone-in</li>
+                        </ul>
+                        <ul>
+                            <li>22 - Travel</li>
+                            <li>23 - Leisure</li>
+                            <li>24 - Jazz music</li>
+                            <li>25 - Country music</li>
+                            <li>26 - National music</li>
+                            <li>27 - Oldies music</li>
+                            <li>28 - Folk music</li>
+                            <li>29 - Documentary</li>
+                            <li>30 - Alarm test</li>
+                            <li>31 - Alarm</li>
+                        </ul>
+                    </div>
+                </div>
+        
+                <div id="rbds">
+                    <h3>PTY kódy pro RBDS</h3>
+                    <div class="flex-container pty-codes-list">
+                        <ul>
+                            <li>0 - Undefined</li>
+                            <li>1 - News</li>
+                            <li>2 - Information</li>
+                            <li>3 - Sports</li>
+                            <li>4 - Talk</li>
+                            <li>5 - Rock</li>
+                            <li>6 - Classic rock</li>
+                            <li>7 - Adult hits</li>
+                            <li>8 - Soft rock</li>
+                            <li>9 - TOP 40</li>
+                            <li>10 - Country</li>                         
+                        </ul>
+                        <ul>
+                            <li>11 - Oldies</li>
+                            <li>12 - Soft music</li>
+                            <li>13 - Nostalgia</li>
+                            <li>14 - Jazz</li>
+                            <li>15 - Classical</li>
+                            <li>16 - Rhythm and blues</li>
+                            <li>17 - Soft rhythm and blues</li>
+                            <li>18 - Language</li>
+                            <li>19 - Religious music</li>
+                            <li>20 - Religious talk</li> 
+                            <li>21 - Personality</li>
+                        </ul>
+                        <ul>
+                            <li>22 - Public</li>
+                            <li>23 - College</li>
+                            <li>24 - Spanish talk</li>
+                            <li>25 - Spanish music</li>
+                            <li>26 - Hip hop</li>
+                            <li>27 - Unassigned</li>
+                            <li>28 - Unassigned</li>
+                            <li>29 - Weather</li>
+                            <li>30 - Emergency test</li>
+                            <li>31 - Emergency</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="flex-container">
+            <a style="margin-right: 30px;" class="fadeinout" href="https://github.com/barteqcz/nanords" target="_blank"><img src="../../imgs/github-mark-white.svg" width="50px"></a>
+        </div>
+        <p>2024 od barteqcz</p>
+    </footer>
+</body>
+</html>
