@@ -39,11 +39,12 @@ static inline void float2char2channel(float *inbuf, char *outbuf, size_t frames)
 }
 
 static void *control_pipe_worker() {
+    fprintf(stderr, "Control pipe thread started.\n");
     while (!stop_rds) {
         poll_control_pipe();
         msleep(READ_TIMEOUT_MS);
     }
-
+    fprintf(stderr, "Control pipe thread exiting.\n");
     close_control_pipe();
     pthread_exit(NULL);
 }
@@ -88,7 +89,7 @@ int main(int argc, char **argv) {
     float *out_buffer;
     char *dev_out;
 
-    int8_t r;
+    int r;
     size_t frames;
 
     SRC_STATE *src_state;
@@ -177,7 +178,7 @@ int main(int argc, char **argv) {
             }
         } else if (strcmp(argv[i], "--af") == 0) {
             if (i + 1 < argc) {
-                if (add_rds_af(&rds_params.af, strtof(argv[i + 1], NULL)) == 1) {
+                if (add_rds_af(&rds_params.af, strtof(argv[i + 1], NULL))) {
                     return 1;
                 }
                 i++;
@@ -243,13 +244,12 @@ int main(int argc, char **argv) {
 
     mpx_buffer = malloc(NUM_MPX_FRAMES_IN * 2 * sizeof(float));
     out_buffer = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof(float));
-    dev_out = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof(int16_t) * sizeof(char));
+    dev_out = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof(int16_t));
 
     signal(SIGINT, stop);
     signal(SIGTERM, stop);
 
     fm_mpx_init(MPX_SAMPLE_RATE);
-
     init_rds_encoder(rds_params);
 
     memset(&format, 0, sizeof(struct ao_sample_format));
@@ -259,7 +259,6 @@ int main(int argc, char **argv) {
     format.byte_format = AO_FMT_LITTLE;
 
     ao_initialize();
-
     device = ao_open_live(ao_default_driver_id(), &format, NULL);
     if (device == NULL) {
         fprintf(stderr, "Error: cannot open sound device.\n");
@@ -274,9 +273,9 @@ int main(int argc, char **argv) {
     src_data.data_in = mpx_buffer;
     src_data.data_out = out_buffer;
 
-    r = resampler_init(&src_state, 2);
-    if (r < 0) {
-        fprintf(stderr, "Could not create output resampler.\n");
+    src_state = src_new(SRC_LINEAR, 2, &r);
+    if (!src_state) {
+        fprintf(stderr, "Resampler error: %s\n", src_strerror(r));
         goto exit;
     }
 
@@ -298,20 +297,16 @@ int main(int argc, char **argv) {
         }
     }
 
-    for (;;) {
+    while (!stop_rds) {
         fm_rds_get_frames(mpx_buffer, NUM_MPX_FRAMES_IN);
 
-        if (resample(src_state, src_data, &frames) < 0) break;
+        src_process(src_state, &src_data);
+        frames = src_data.output_frames_gen;
 
         float2char2channel(out_buffer, dev_out, frames);
 
         if (!ao_play(device, dev_out, frames * 2 * sizeof(int16_t))) {
-            fprintf(stderr, "Error: could not play audio.\n");
-            break;
-        }
-
-        if (stop_rds) {
-            fprintf(stderr, "Stopping...\n");
+            fprintf(stderr, "Audio write error\n");
             break;
         }
     }
