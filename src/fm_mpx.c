@@ -1,0 +1,53 @@
+#include "common.h"
+#include "rds.h"
+#include "fm_mpx.h"
+#include "osc.h"
+
+static struct osc_t osc_19k;
+static struct osc_t osc_57k;
+
+static float volumes[2] = {
+    0.09f,
+    0.045f
+};
+
+void set_carrier_volume(uint8_t carrier, float new_volume) {
+    if (carrier == 0) {
+        volumes[0] = (float)new_volume / 100.0f;
+    }
+
+    if (carrier == 1) {
+        volumes[1] = (float)new_volume / 100.0f;
+    }
+}
+
+void fm_mpx_init(uint32_t sample_rate) {
+    osc_init(&osc_19k, sample_rate, 19000.0f);
+    osc_init(&osc_57k, sample_rate, 57000.0f);
+}
+
+void fm_rds_get_frames(float *outbuf, size_t num_frames) {
+    size_t j = 0;
+    float out;
+
+    for (size_t i = 0; i < num_frames; i++) {
+        out = 0.0f;
+
+        out += osc_get_cos(&osc_19k) * volumes[0];
+        out += osc_get_cos(&osc_57k) * get_rds_sample(0) * volumes[1];
+
+        osc_update_pos(&osc_19k);
+        osc_update_pos(&osc_57k);
+
+        out = fminf(+1.0f, out);
+        out = fmaxf(-1.0f, out);
+
+        outbuf[j + 0] = outbuf[j + 1] = out;
+        j += 2;
+    }
+}
+
+void fm_mpx_exit() {
+    osc_exit(&osc_19k);
+    osc_exit(&osc_57k);
+}
