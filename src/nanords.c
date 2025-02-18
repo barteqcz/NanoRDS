@@ -39,12 +39,11 @@ static inline void float2char2channel(float *inbuf, char *outbuf, size_t frames)
 }
 
 static void *control_pipe_worker() {
-    fprintf(stderr, "Control pipe thread started.\n");
     while (!stop_rds) {
         poll_control_pipe();
         msleep(READ_TIMEOUT_MS);
     }
-    fprintf(stderr, "Control pipe thread exiting.\n");
+    fprintf(stderr, "Control pipe thread exiting...\n");
     close_control_pipe();
     pthread_exit(NULL);
 }
@@ -281,14 +280,12 @@ int main(int argc, char **argv) {
 
     if (control_pipe[0]) {
         if (open_control_pipe(control_pipe) == 0) {
-            fprintf(stderr, "Reading control commands on %s.\n", control_pipe);
+            fprintf(stderr, "Reading control commands on %s...\n", control_pipe);
             r = pthread_create(&control_pipe_thread, &attr, control_pipe_worker, NULL);
             if (r < 0) {
                 fprintf(stderr, "Could not create control pipe thread.\n");
                 control_pipe[0] = 0;
                 goto exit;
-            } else {
-                fprintf(stderr, "Created control pipe thread.\n");
             }
         } else {
             fprintf(stderr, "Failed to open control pipe: %s.\n", control_pipe);
@@ -315,7 +312,7 @@ int main(int argc, char **argv) {
 
 exit:
     if (control_pipe[0]) {
-        fprintf(stderr, "Waiting for pipe thread to shut down.\n");
+        fprintf(stderr, "Waiting for pipe thread to shut down...\n");
         pthread_cond_signal(&control_pipe_cond);
         pthread_join(control_pipe_thread, NULL);
     }
