@@ -186,7 +186,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
 
     if (basic_groups_state) {
         if (rds_data.ecc) {
-            if (++group_counter_ecc == 15) {
+            if (++group_counter_ecc == 10) {
                 group_counter_ecc = 0;
                 get_rds_ecc_group(blocks);
                 return 1;
@@ -194,7 +194,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
         }
 
         if (rds_data.lic) {
-            if (++group_counter_lic == 15) {
+            if (++group_counter_lic == 10) {
                 group_counter_lic = 0;
                 get_rds_lic_group(blocks);
                 return 1;
@@ -202,7 +202,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
         }
 
         if (rtp_cfg.running || rtp_cfg.toggle) {
-            if (++group_counter_rtp_oda == 15) {
+            if (++group_counter_rtp_oda == 10) {
                 group_counter_rtp_oda = 0;
                 get_rds_rtp_oda_group(blocks);
                 return 1;
@@ -218,7 +218,7 @@ static uint8_t get_rds_other_groups(uint16_t *blocks) {
         }
 
         if (rtp_cfg.running || rtp_cfg.toggle) {
-            if (++group_counter_rtp == 15) {
+            if (++group_counter_rtp == 10) {
                 group_counter_rtp = 0;
                 get_rds_rtp_group(blocks);
                 return 1;
