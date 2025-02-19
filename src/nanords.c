@@ -280,7 +280,7 @@ int main(int argc, char **argv) {
 
     if (control_pipe[0]) {
         if (open_control_pipe(control_pipe) == 0) {
-            fprintf(stderr, "Reading control commands on "%s"\n", control_pipe);
+            fprintf(stderr, "Reading control commands on '%s'\n", control_pipe);
             r = pthread_create(&control_pipe_thread, &attr, control_pipe_worker, NULL);
             if (r < 0) {
                 fprintf(stderr, "Error: could not create control pipe thread\n");
@@ -288,7 +288,7 @@ int main(int argc, char **argv) {
                 goto exit;
             }
         } else {
-            fprintf(stderr, "Error: failed to open control pipe - %s\n", control_pipe);
+            fprintf(stderr, "Error: failed to open control pipe '%s'\n", control_pipe);
             control_pipe[0] = 0;
             goto exit;
         }
