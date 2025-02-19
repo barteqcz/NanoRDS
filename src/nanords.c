@@ -274,7 +274,7 @@ int main(int argc, char **argv) {
 
     src_state = src_new(SRC_LINEAR, 2, &r);
     if (!src_state) {
-        fprintf(stderr, "Error: resampler error - %s.\n", src_strerror(r));
+        fprintf(stderr, "Error: resampler error - %s\n", src_strerror(r));
         goto exit;
     }
 
@@ -288,7 +288,7 @@ int main(int argc, char **argv) {
                 goto exit;
             }
         } else {
-            fprintf(stderr, "Error: failed to open control pipe - %s.\n", control_pipe);
+            fprintf(stderr, "Error: failed to open control pipe - %s\n", control_pipe);
             control_pipe[0] = 0;
             goto exit;
         }
@@ -303,7 +303,7 @@ int main(int argc, char **argv) {
         float2char2channel(out_buffer, dev_out, frames);
 
         if (!ao_play(device, dev_out, frames * 2 * sizeof(int16_t))) {
-            fprintf(stderr, "Error: audio write failure.\n");
+            fprintf(stderr, "Error: audio write failure\n");
             break;
         }
     }
