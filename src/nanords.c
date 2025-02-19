@@ -260,7 +260,7 @@ int main(int argc, char **argv) {
     ao_initialize();
     device = ao_open_live(ao_default_driver_id(), &format, NULL);
     if (device == NULL) {
-        fprintf(stderr, "Error: cannot open sound device.\n");
+        fprintf(stderr, "Error: cannot open sound device\n");
         ao_shutdown();
         goto exit;
     }
@@ -274,7 +274,7 @@ int main(int argc, char **argv) {
 
     src_state = src_new(SRC_LINEAR, 2, &r);
     if (!src_state) {
-        fprintf(stderr, "Resampler error: %s\n", src_strerror(r));
+        fprintf(stderr, "Error: resampler error - %s.\n", src_strerror(r));
         goto exit;
     }
 
@@ -283,12 +283,12 @@ int main(int argc, char **argv) {
             fprintf(stderr, "Reading control commands on %s...\n", control_pipe);
             r = pthread_create(&control_pipe_thread, &attr, control_pipe_worker, NULL);
             if (r < 0) {
-                fprintf(stderr, "Could not create control pipe thread.\n");
+                fprintf(stderr, "Error: could not create control pipe thread\n");
                 control_pipe[0] = 0;
                 goto exit;
             }
         } else {
-            fprintf(stderr, "Failed to open control pipe: %s.\n", control_pipe);
+            fprintf(stderr, "Error: failed to open control pipe - %s.\n", control_pipe);
             control_pipe[0] = 0;
             goto exit;
         }
@@ -303,7 +303,7 @@ int main(int argc, char **argv) {
         float2char2channel(out_buffer, dev_out, frames);
 
         if (!ao_play(device, dev_out, frames * 2 * sizeof(int16_t))) {
-            fprintf(stderr, "Audio write error\n");
+            fprintf(stderr, "Error: audio write failure.\n");
             break;
         }
     }
