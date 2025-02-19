@@ -43,7 +43,7 @@ static void *control_pipe_worker() {
         poll_control_pipe();
         msleep(READ_TIMEOUT_MS);
     }
-
+    fprintf(stderr, "Control pipe thread exiting...\n");
     close_control_pipe();
     pthread_exit(NULL);
 }
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
     float *out_buffer;
     char *dev_out;
 
-    int8_t r;
+    int r;
     size_t frames;
 
     SRC_STATE *src_state;
@@ -177,7 +177,7 @@ int main(int argc, char **argv) {
             }
         } else if (strcmp(argv[i], "--af") == 0) {
             if (i + 1 < argc) {
-                if (add_rds_af(&rds_params.af, strtof(argv[i + 1], NULL)) == 1) {
+                if (add_rds_af(&rds_params.af, strtof(argv[i + 1], NULL))) {
                     return 1;
                 }
                 i++;
@@ -243,13 +243,12 @@ int main(int argc, char **argv) {
 
     mpx_buffer = malloc(NUM_MPX_FRAMES_IN * 2 * sizeof(float));
     out_buffer = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof(float));
-    dev_out = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof(int16_t) * sizeof(char));
+    dev_out = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof(int16_t));
 
     signal(SIGINT, stop);
     signal(SIGTERM, stop);
 
     fm_mpx_init(MPX_SAMPLE_RATE);
-
     init_rds_encoder(rds_params);
 
     memset(&format, 0, sizeof(struct ao_sample_format));
@@ -259,10 +258,9 @@ int main(int argc, char **argv) {
     format.byte_format = AO_FMT_LITTLE;
 
     ao_initialize();
-
     device = ao_open_live(ao_default_driver_id(), &format, NULL);
     if (device == NULL) {
-        fprintf(stderr, "Error: cannot open sound device.\n");
+        fprintf(stderr, "Error: cannot open sound device\n");
         ao_shutdown();
         goto exit;
     }
@@ -274,44 +272,38 @@ int main(int argc, char **argv) {
     src_data.data_in = mpx_buffer;
     src_data.data_out = out_buffer;
 
-    r = resampler_init(&src_state, 2);
-    if (r < 0) {
-        fprintf(stderr, "Could not create output resampler.\n");
+    src_state = src_new(SRC_LINEAR, 2, &r);
+    if (!src_state) {
+        fprintf(stderr, "Error: resampler error - %s\n", src_strerror(r));
         goto exit;
     }
 
     if (control_pipe[0]) {
         if (open_control_pipe(control_pipe) == 0) {
-            fprintf(stderr, "Reading control commands on %s.\n", control_pipe);
+            fprintf(stderr, "Reading control commands on '%s'...\n", control_pipe);
             r = pthread_create(&control_pipe_thread, &attr, control_pipe_worker, NULL);
             if (r < 0) {
-                fprintf(stderr, "Could not create control pipe thread.\n");
+                fprintf(stderr, "Error: could not create control pipe thread\n");
                 control_pipe[0] = 0;
                 goto exit;
-            } else {
-                fprintf(stderr, "Created control pipe thread.\n");
             }
         } else {
-            fprintf(stderr, "Failed to open control pipe: %s.\n", control_pipe);
+            fprintf(stderr, "Error: failed to open control pipe '%s'\n", control_pipe);
             control_pipe[0] = 0;
             goto exit;
         }
     }
 
-    for (;;) {
+    while (!stop_rds) {
         fm_rds_get_frames(mpx_buffer, NUM_MPX_FRAMES_IN);
 
-        if (resample(src_state, src_data, &frames) < 0) break;
+        src_process(src_state, &src_data);
+        frames = src_data.output_frames_gen;
 
         float2char2channel(out_buffer, dev_out, frames);
 
         if (!ao_play(device, dev_out, frames * 2 * sizeof(int16_t))) {
-            fprintf(stderr, "Error: could not play audio.\n");
-            break;
-        }
-
-        if (stop_rds) {
-            fprintf(stderr, "Stopping...\n");
+            fprintf(stderr, "Error: audio write failure\n");
             break;
         }
     }
@@ -320,7 +312,7 @@ int main(int argc, char **argv) {
 
 exit:
     if (control_pipe[0]) {
-        fprintf(stderr, "Waiting for pipe thread to shut down.\n");
+        fprintf(stderr, "Waiting for pipe thread to shut down...\n");
         pthread_cond_signal(&control_pipe_cond);
         pthread_join(control_pipe_thread, NULL);
     }
