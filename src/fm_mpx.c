@@ -8,7 +8,7 @@ static struct osc_t osc_57k;
 
 static float volumes[2] = {
     0.09f,
-    0.045f
+    0.09f
 };
 
 void set_carrier_volume(uint8_t carrier, float new_volume) {
@@ -17,7 +17,7 @@ void set_carrier_volume(uint8_t carrier, float new_volume) {
     }
 
     if (carrier == 1) {
-        volumes[1] = (float)new_volume / 100.0f;
+        volumes[1] = (float)new_volume / 100.0f * 2;
     }
 }
 
