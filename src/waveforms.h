@@ -1,1 +1,0 @@
-extern float waveform_biphase[1120];
