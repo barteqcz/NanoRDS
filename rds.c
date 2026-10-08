@@ -28,10 +28,67 @@ static struct {
     uint8_t len[2];
 } rtp_cfg;
 
+/* RDS VHF AF codes 1..204 represent 87.6..107.9 MHz in 100 kHz steps.
+ * Reject off-grid values rather than silently broadcasting another frequency. */
+static int vhf_af_code(float mhz) {
+    long code;
+    float scaled;
+    if (!isfinite(mhz) || mhz < 87.6f || mhz > 107.9f) return -1;
+    scaled = mhz * 10.0f - 875.0f;
+    code = lroundf(scaled);
+    if (code < 1 || code > 204 || fabsf(scaled - (float)code) > 0.001f) return -1;
+    return (int)code;
+}
+
+int init_rds_af_method_b(struct rds_af_t *list, float tuning_mhz) {
+    int code = vhf_af_code(tuning_mhz);
+    if (!list || code < 0) return -1;
+    memset(list, 0, sizeof *list);
+    list->method = AF_METHOD_B;
+    list->tuning_code = (uint8_t)code;
+    return 0;
+}
+
+int add_rds_af_method_b(struct rds_af_t *list, float frequency_mhz, int regional) {
+    int af;
+    uint8_t tuned;
+    uint16_t pair;
+    if (!list || list->method != AF_METHOD_B || !list->tuning_code ||
+        list->num_b_pairs >= AF_B_MAX_PAIRS) return -1;
+    af = vhf_af_code(frequency_mhz);
+    if (af < 0 || af == list->tuning_code) return -1;
+    tuned = list->tuning_code;
+    /* Ascending pairs mean same programme. Descending pairs mean a
+     * regional variant (IEC 62106 / NRSC-4 Method B convention). */
+    if (regional)
+        pair = ((uint16_t)(af > tuned ? af : tuned) << 8) |
+               (uint16_t)(af < tuned ? af : tuned);
+    else
+        pair = ((uint16_t)(af < tuned ? af : tuned) << 8) |
+               (uint16_t)(af > tuned ? af : tuned);
+
+    for (uint8_t i = 0; i < list->num_b_pairs; ++i) {
+        uint16_t other = list->b_pairs[i];
+        if ((uint8_t)(other >> 8) == af || (uint8_t)other == af) return -1;
+    }
+    list->b_pairs[list->num_b_pairs++] = pair;
+    return 0;
+}
+
 static uint16_t get_next_af(void) {
     uint16_t out;
 
-    if (rds_data.af.num_afs) {
+    if (rds_data.af.method == AF_METHOD_B && rds_data.af.num_b_pairs) {
+        if (af_state > rds_data.af.num_b_pairs) af_state = 0;
+        if (af_state == 0) {
+            /* The count includes the tuning frequency (first pair's low byte). */
+            out = (uint16_t)(AF_CODE_NUM_AFS_BASE + rds_data.af.num_b_pairs + 1) << 8;
+            out |= rds_data.af.tuning_code;
+        } else {
+            out = rds_data.af.b_pairs[af_state - 1];
+        }
+        if (++af_state > rds_data.af.num_b_pairs) af_state = 0;
+    } else if (rds_data.af.method == AF_METHOD_A && rds_data.af.num_afs) {
         if (af_state >= rds_data.af.num_entries) af_state = 0;
         if (af_state == 0) {
             out = (AF_CODE_NUM_AFS_BASE + rds_data.af.num_afs) << 8;
@@ -286,7 +343,8 @@ int init_rds_encoder(struct rds_params_t rds_params) {
     group_counter_ecc = group_counter_lic = group_counter_rtp_oda = 0;
     group_counter_ptyn = group_counter_rtp = 0;
     latest_minutes = -1;
-    if (rds_params.af.num_afs) {
+    if (rds_params.af.num_afs ||
+        (rds_params.af.method == AF_METHOD_B && rds_params.af.num_b_pairs)) {
         set_rds_af(rds_params.af);
     }
 
@@ -394,8 +452,13 @@ void set_rds_rtp_tags(uint8_t *tags) {
 }
 
 void set_rds_af(struct rds_af_t new_af_list) {
-    if (new_af_list.num_entries > sizeof new_af_list.afs || new_af_list.num_afs > 25 ||
-        new_af_list.num_afs > new_af_list.num_entries) return;
+    if (new_af_list.method == AF_METHOD_B) {
+        if (!new_af_list.tuning_code || new_af_list.tuning_code > 204 ||
+            !new_af_list.num_b_pairs || new_af_list.num_b_pairs > AF_B_MAX_PAIRS) return;
+    } else if (new_af_list.method == AF_METHOD_A) {
+        if (new_af_list.num_entries > sizeof new_af_list.afs || new_af_list.num_afs > 25 ||
+            new_af_list.num_afs > new_af_list.num_entries) return;
+    } else return;
     rds_data.af = new_af_list;
     af_state = 0;
 }
