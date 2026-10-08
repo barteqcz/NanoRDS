@@ -1,0 +1,137 @@
+name: Build and publish NanoRDS
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    name: Windows x64 (MSYS2 UCRT64)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            make
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-binutils
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-libsamplerate
+            mingw-w64-ucrt-x86_64-portaudio
+      - name: Build Windows executable
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          make -j2
+          ./build/windows/nanords.exe --help
+      - name: Bundle Windows DLLs (recursively)
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          dest=dist/NanoRDS-Windows-x64
+          mkdir -p "$dest/third-party-licenses"
+          cp build/windows/nanords.exe commands.example.txt LICENSE "$dest/"
+
+          # Scan PE import tables and copy all matching UCRT64 DLLs,
+          # including the DLLs needed by other DLLs. Windows system DLLs
+          # are not bundled because they aren't in $MINGW_PREFIX/bin.
+          queue=(build/windows/nanords.exe)
+          declare -A scanned=()
+          while ((${#queue[@]})); do
+            file="${queue[0]}"
+            queue=("${queue[@]:1}")
+            if [[ -n "${scanned[$file]:-}" ]]; then continue; fi
+            scanned["$file"]=1
+            while IFS= read -r dll; do
+              if [[ "${dll,,}" == msys-2.0.dll ]]; then
+                echo "ERROR: executable depends on MSYS2 runtime" >&2
+                exit 1
+              fi
+              origin="$(find "$MINGW_PREFIX/bin" -maxdepth 1 -iname "$dll" -print -quit)"
+              [[ -n "$origin" ]] || continue
+              target="$dest/$(basename "$origin")"
+              if [[ ! -f "$target" ]]; then
+                cp "$origin" "$target"
+                queue+=("$target")
+                echo "Bundled $(basename "$origin")"
+              fi
+            done < <(objdump -p "$file" | awk 'tolower($1)=="dll" && tolower($2)=="name:" {print $3}')
+          done
+
+          # Fail if the two main libraries were not included.
+          test -f "$dest/libsamplerate-0.dll"
+          test -f "$dest/libportaudio.dll"
+
+          # Include notices supplied with the redistributed audio libraries.
+          cp "$MINGW_PREFIX/share/licenses/libsamplerate/COPYING" \
+             "$dest/third-party-licenses/libsamplerate-LICENSE.txt"
+          cp "$MINGW_PREFIX/share/doc/portaudio/LICENSE.txt" \
+             "$dest/third-party-licenses/PortAudio-LICENSE.txt"
+          # Additional MinGW runtime license files, when installed.
+          for pkg in libgcc gcc-libs libwinpthread; do
+            if [[ -d "$MINGW_PREFIX/share/licenses/$pkg" ]]; then
+              mkdir -p "$dest/third-party-licenses/$pkg"
+              cp -r "$MINGW_PREFIX/share/licenses/$pkg/." \
+                    "$dest/third-party-licenses/$pkg/"
+            fi
+          done
+          ls -la "$dest"
+      - name: Create Windows ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/NanoRDS-Windows-x64 -DestinationPath dist/NanoRDS-Windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Windows-x64
+          path: dist/NanoRDS-Windows-x64.zip
+          if-no-files-found: error
+
+  linux:
+    name: Linux x64 (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libsamplerate0-dev libao-dev
+      - name: Build Linux executable
+        run: |
+          make -j2
+          ./build/linux/nanords --help
+      - name: Create Linux archive
+        run: |
+          mkdir -p dist/NanoRDS-Linux-x64
+          cp build/linux/nanords README.md commands.example.txt LICENSE dist/NanoRDS-Linux-x64/
+          tar -C dist -czf dist/NanoRDS-Linux-x64.tar.gz NanoRDS-Linux-x64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Linux-x64
+          path: dist/NanoRDS-Linux-x64.tar.gz
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          fail_on_unmatched_files: true
+          generate_release_notes: true
