@@ -1,0 +1,16 @@
+# Compiled files and local commands
+/build/
+/commands.txt
+*.exe
+*.o
+*.d
+*.dll
+*.a
+*.so
+*.pdb
+
+# Editor and OS artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
