@@ -1,6 +1,6 @@
 # NanoRDS
 
-NanoRDS is a lightweight, software RDS encoder for Linux.
+NanoRDS is a lightweight, software RDS encoder.
 
 <img src="https://raw.githubusercontent.com/barteqcz/NanoRDS/refs/heads/www/imgs/demo.png" alt="NanoRDS on a TEF6686-based receiver"/>
 <em>The image above shows NanoRDS in action in testing environment. The software used to demonstrate the broadcast is <a href="https://github.com/NoobishSVK/fm-dx-webserver">FM-DX Webserver</a>.
