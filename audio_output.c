@@ -1,9 +1,10 @@
 #include "common.h"
 #include "audio_output.h"
 #ifdef _WIN32
+#include <windows.h>
+#include <mmreg.h>
 #include <portaudio.h>
 #include <pa_win_wasapi.h>
-#include <mmreg.h>
 struct audio_output { PaStream *stream; int reported_underflow; };
 static int audio_error(const char *operation, PaError error) {
     fprintf(stderr, "%s: %s\n", operation, Pa_GetErrorText(error));
