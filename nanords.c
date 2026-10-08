@@ -27,7 +27,9 @@ static void show_help(void) {
          "  --ms 0|1          Music/speech flag\n"
          "  --tp 0|1          Traffic Program flag\n"
          "  --di NUMBER       Decoder Information, 0..15\n"
-         "  --af FREQUENCY    Alternative frequency; repeat for a list\n"
+         "  --af a|b|MHz      AF method: A (default), B, or alternative frequency; repeat MHz\n"
+         "  --af-tuned MHz    Transmitter frequency for AF Method B\n"
+         "  --af-regional MHz Regional alternative, Method B only; repeatable\n"
          "  --ecc HEX         Extended Country Code, 00..FF\n"
          "  --lic HEX         Language Identification Code, 000..FFF\n"
          "  --stereo PERCENT  Pilot level, 0..100\n"
@@ -54,6 +56,9 @@ static int run(int argc, char **argv) {
         .rt = "NanoRDS - software RDS encoder"
     };
     struct rds_af_t frequencies = {0};
+    float af_same[25], af_regional[AF_B_MAX_PAIRS], af_tuned = 0;
+    size_t af_same_count = 0, af_regional_count = 0;
+    int af_method = AF_METHOD_A, af_tuned_set = 0;
     const char *control_name = NULL;
     SRC_STATE *converter = NULL;
     audio_output *device = NULL;
@@ -97,7 +102,19 @@ static int run(int argc, char **argv) {
             if (parse_uint(value, 10, 15, &number)) goto bad_option;
             set_rds_di((uint8_t)number);
         } else if (!strcmp(option, "--af")) {
-            if (parse_float(value, 0, 2000, &level) || add_rds_af(&frequencies, level)) goto bad_option;
+            if (!strcmp(value, "a")) af_method = AF_METHOD_A;
+            else if (!strcmp(value, "b")) af_method = AF_METHOD_B;
+            else {
+                if (parse_float(value, 0, 2000, &level) || af_same_count == 25) goto bad_option;
+                af_same[af_same_count++] = level;
+            }
+        } else if (!strcmp(option, "--af-tuned")) {
+            if (parse_float(value, 87.6f, 107.9f, &af_tuned)) goto bad_option;
+            af_tuned_set = 1;
+        } else if (!strcmp(option, "--af-regional")) {
+            if (parse_float(value, 87.6f, 107.9f, &level) ||
+                af_regional_count == AF_B_MAX_PAIRS) goto bad_option;
+            af_regional[af_regional_count++] = level;
         } else if (!strcmp(option, "--ecc")) {
             if (parse_uint(value, 16, 255, &number)) goto bad_option;
             set_rds_ecc((uint16_t)number);
@@ -116,6 +133,36 @@ static int run(int argc, char **argv) {
     bad_option:
         fprintf(stderr, "Invalid option or value: %s %s\n", option, value);
         goto done;
+    }
+    if (af_method == AF_METHOD_B) {
+        if (!af_tuned_set || (!af_same_count && !af_regional_count) ||
+            init_rds_af_method_b(&frequencies, af_tuned)) {
+            fprintf(stderr, "AF Method B requires --af-tuned (87.6..107.9) and alternatives.\n");
+            goto done;
+        }
+        for (size_t i = 0; i < af_same_count; ++i) {
+            if (add_rds_af_method_b(&frequencies, af_same[i], 0)) {
+                fprintf(stderr, "Invalid or duplicate Method B AF, or over 12 alternatives.\n");
+                goto done;
+            }
+        }
+        for (size_t i = 0; i < af_regional_count; ++i) {
+            if (add_rds_af_method_b(&frequencies, af_regional[i], 1)) {
+                fprintf(stderr, "Invalid or duplicate Method B regional AF, or over 12 alternatives.\n");
+                goto done;
+            }
+        }
+    } else {
+        if (af_tuned_set || af_regional_count) {
+            fprintf(stderr, "--af-tuned and --af-regional require --af b.\n");
+            goto done;
+        }
+        for (size_t i = 0; i < af_same_count; ++i) {
+            if (add_rds_af(&frequencies, af_same[i])) {
+                fprintf(stderr, "Invalid Method A alternative frequency.\n");
+                goto done;
+            }
+        }
     }
     set_rds_af(frequencies);
     if (platform_init_shutdown() || audio_output_init()) goto done;
