@@ -17,6 +17,10 @@
 #define AF_CODE_NO_AF 224
 #define AF_CODE_NUM_AFS_BASE AF_CODE_NO_AF
 #define AF_CODE_LFMF_FOLLOWS 250
+#define AF_METHOD_A 0
+#define AF_METHOD_B 1
+/* A single Method B list contains at most twelve tuning/AF pairs. */
+#define AF_B_MAX_PAIRS 12
 
 #define INT8_ALL 0xff
 
@@ -100,6 +104,10 @@ typedef struct rds_af_t {
 	uint8_t num_entries;
 	uint8_t num_afs;
 	uint8_t afs[25];
+	uint8_t method;
+	uint8_t tuning_code;
+	uint8_t num_b_pairs;
+	uint16_t b_pairs[AF_B_MAX_PAIRS];
 } rds_af_t;
 
 typedef struct rds_params_t {
@@ -132,6 +140,8 @@ extern void set_rds_ta(uint8_t ta);
 extern void set_rds_pty(uint8_t pty);
 extern void set_rds_ptyn(unsigned char *ptyn);
 extern void set_rds_af(struct rds_af_t new_af_list);
+extern int init_rds_af_method_b(struct rds_af_t *list, float tuning_mhz);
+extern int add_rds_af_method_b(struct rds_af_t *list, float frequency_mhz, int regional);
 extern void set_rds_tp(uint8_t tp);
 extern void set_rds_ms(uint8_t ms);
 extern void set_rds_ct(uint8_t ct);
