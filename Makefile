@@ -60,15 +60,8 @@ $(BUILD_DIR)/%.o: %.c
 
 $(BIN): $(OBJS)
 	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
-	@echo "Built $@ (RDS subcarrier: fixed at 57000 Hz)"
 
 clean:
 	rm -rf build/
-
-help:
-	@echo "Build: make [RBDS=0|1] (RDS subcarrier fixed at 57 kHz)"
-	@echo "Clean: make clean"
-	@echo "Binary: $(BIN)"
-	@echo "Libraries: $(PACKAGES) (via pkg-config)"
 
 -include $(DEPS)
