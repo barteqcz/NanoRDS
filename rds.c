@@ -81,8 +81,8 @@ static uint16_t get_next_af(void) {
     if (rds_data.af.method == AF_METHOD_B && rds_data.af.num_b_pairs) {
         if (af_state > rds_data.af.num_b_pairs) af_state = 0;
         if (af_state == 0) {
-            /* The count includes the tuning frequency (first pair's low byte). */
-            out = (uint16_t)(AF_CODE_NUM_AFS_BASE + rds_data.af.num_b_pairs + 1) << 8;
+            /* Count every AF frequency code: one tuning frequency and two codes per pair. */
+            out = (uint16_t)(AF_CODE_NUM_AFS_BASE + 2 * rds_data.af.num_b_pairs + 1) << 8;
             out |= rds_data.af.tuning_code;
         } else {
             out = rds_data.af.b_pairs[af_state - 1];
