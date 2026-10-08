@@ -12,6 +12,38 @@ static int set_af_command(char *arg) {
     size_t count = 0;
     char *cursor;
     if (!strcmp(arg, "c")) { set_rds_af(list); return 0; }
+    if (arg[0] == 'b' && (arg[1] == '\0' || isspace((unsigned char)arg[1]))) {
+        float tuned;
+        char *end;
+        int regional = 0;
+        cursor = arg + 1;
+        while (isspace((unsigned char)*cursor)) ++cursor;
+        errno = 0;
+        tuned = strtof(cursor, &end);
+        if (errno || end == cursor || (*end && !isspace((unsigned char)*end)) ||
+            init_rds_af_method_b(&list, tuned)) return -1;
+        cursor = end;
+        while (*cursor) {
+            float frequency;
+            while (isspace((unsigned char)*cursor)) ++cursor;
+            if (!*cursor) break;
+            if (!strncmp(cursor, "regional", 8) &&
+                (!cursor[8] || isspace((unsigned char)cursor[8]))) {
+                if (regional) return -1;
+                regional = 1;
+                cursor += 8;
+                continue;
+            }
+            errno = 0;
+            frequency = strtof(cursor, &end);
+            if (errno || end == cursor || (*end && !isspace((unsigned char)*end)) ||
+                add_rds_af_method_b(&list, frequency, regional)) return -1;
+            cursor = end;
+        }
+        if (!list.num_b_pairs) return -1;
+        set_rds_af(list);
+        return 0;
+    }
     if (arg[0] != 's' || (arg[1] && !isspace((unsigned char)arg[1]))) return -1;
     cursor = arg + 1;
     while (*cursor) {
