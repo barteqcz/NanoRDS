@@ -27,9 +27,9 @@ static void show_help(void) {
          "  --ms 0|1          Music/speech flag\n"
          "  --tp 0|1          Traffic Program flag\n"
          "  --di NUMBER       Decoder Information, 0..15\n"
-         "  --af a|b|MHz      AF method: A (default), B, or alternative frequency; repeat MHz\n"
-         "  --af-tuned MHz    Transmitter frequency for AF Method B\n"
-         "  --af-regional MHz Regional alternative, Method B only; repeatable\n"
+         "  --af a MHz...     Method A: list of alternative frequencies\n"
+         "  --af b TX MHz... [regional MHz...]\n"
+         "                    Method B: TX is the transmitter frequency\n"
          "  --ecc HEX         Extended Country Code, 00..FF\n"
          "  --lic HEX         Language Identification Code, 000..FFF\n"
          "  --stereo PERCENT  Pilot level, 0..100\n"
@@ -58,7 +58,7 @@ static int run(int argc, char **argv) {
     struct rds_af_t frequencies = {0};
     float af_same[25], af_regional[AF_B_MAX_PAIRS], af_tuned = 0;
     size_t af_same_count = 0, af_regional_count = 0;
-    int af_method = AF_METHOD_A, af_tuned_set = 0;
+    int af_method = AF_METHOD_A, af_specified = 0;
     const char *control_name = NULL;
     SRC_STATE *converter = NULL;
     audio_output *device = NULL;
@@ -102,19 +102,49 @@ static int run(int argc, char **argv) {
             if (parse_uint(value, 10, 15, &number)) goto bad_option;
             set_rds_di((uint8_t)number);
         } else if (!strcmp(option, "--af")) {
-            if (!strcmp(value, "a")) af_method = AF_METHOD_A;
-            else if (!strcmp(value, "b")) af_method = AF_METHOD_B;
-            else {
-                if (parse_float(value, 0, 2000, &level) || af_same_count == 25) goto bad_option;
-                af_same[af_same_count++] = level;
+            int regional = 0, needs_regional_frequency = 0;
+            if (af_specified++) {
+                fprintf(stderr, "Specify --af only once, with a or b and its frequencies.\n");
+                goto done;
             }
-        } else if (!strcmp(option, "--af-tuned")) {
-            if (parse_float(value, 87.6f, 107.9f, &af_tuned)) goto bad_option;
-            af_tuned_set = 1;
-        } else if (!strcmp(option, "--af-regional")) {
-            if (parse_float(value, 87.6f, 107.9f, &level) ||
-                af_regional_count == AF_B_MAX_PAIRS) goto bad_option;
-            af_regional[af_regional_count++] = level;
+            if (!strcmp(value, "a")) af_method = AF_METHOD_A;
+            else if (!strcmp(value, "b")) {
+                af_method = AF_METHOD_B;
+                if (i + 1 == argc || argv[i + 1][0] == '-' ||
+                    parse_float(argv[++i], 87.6f, 107.9f, &af_tuned)) {
+                    fprintf(stderr, "--af b requires a transmitter frequency first.\n");
+                    goto done;
+                }
+            } else goto bad_option;
+
+            /* Each --af configuration ends at the next CLI option. */
+            while (i + 1 < argc && argv[i + 1][0] != '-') {
+                int duplicate = 0;
+                value = argv[++i];
+                if (af_method == AF_METHOD_B && !strcmp(value, "regional")) {
+                    if (regional) goto bad_option;
+                    regional = needs_regional_frequency = 1;
+                    continue;
+                }
+                if (parse_float(value, 0, 2000, &level)) goto bad_option;
+                if (af_method == AF_METHOD_B && regional) {
+                    if (af_regional_count == AF_B_MAX_PAIRS) goto bad_option;
+                    af_regional[af_regional_count++] = level;
+                    needs_regional_frequency = 0;
+                } else {
+                    if (af_method == AF_METHOD_A)
+                        for (size_t j = 0; j < af_same_count; ++j)
+                            if (af_same[j] == level) duplicate = 1;
+                    if (!duplicate) {
+                        if (af_same_count == 25) goto bad_option;
+                        af_same[af_same_count++] = level;
+                    }
+                }
+            }
+            if ((!af_same_count && !af_regional_count) || needs_regional_frequency) {
+                fprintf(stderr, "--af requires frequencies; 'regional' must be followed by frequencies.\n");
+                goto done;
+            }
         } else if (!strcmp(option, "--ecc")) {
             if (parse_uint(value, 16, 255, &number)) goto bad_option;
             set_rds_ecc((uint16_t)number);
@@ -135,9 +165,8 @@ static int run(int argc, char **argv) {
         goto done;
     }
     if (af_method == AF_METHOD_B) {
-        if (!af_tuned_set || (!af_same_count && !af_regional_count) ||
-            init_rds_af_method_b(&frequencies, af_tuned)) {
-            fprintf(stderr, "AF Method B requires --af-tuned (87.6..107.9) and alternatives.\n");
+        if (init_rds_af_method_b(&frequencies, af_tuned)) {
+            fprintf(stderr, "Invalid AF Method B transmitter frequency (87.6..107.9 MHz, 0.1 MHz steps).\n");
             goto done;
         }
         for (size_t i = 0; i < af_same_count; ++i) {
@@ -153,10 +182,6 @@ static int run(int argc, char **argv) {
             }
         }
     } else {
-        if (af_tuned_set || af_regional_count) {
-            fprintf(stderr, "--af-tuned and --af-regional require --af b.\n");
-            goto done;
-        }
         for (size_t i = 0; i < af_same_count; ++i) {
             if (add_rds_af(&frequencies, af_same[i])) {
                 fprintf(stderr, "Invalid Method A alternative frequency.\n");
