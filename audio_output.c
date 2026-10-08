@@ -3,6 +3,7 @@
 #ifdef _WIN32
 #include <portaudio.h>
 #include <pa_win_wasapi.h>
+#include <mmreg.h>
 struct audio_output { PaStream *stream; int reported_underflow; };
 static int audio_error(const char *operation, PaError error) {
     fprintf(stderr, "%s: %s\n", operation, Pa_GetErrorText(error));
@@ -19,14 +20,23 @@ int audio_output_list(void) {
     for (PaDeviceIndex i = 0; i < count; ++i) {
         const PaDeviceInfo *info = Pa_GetDeviceInfo(i);
         const PaHostApiInfo *host = info ? Pa_GetHostApiInfo(info->hostApi) : NULL;
-        if (host && host->type == paWASAPI && info->maxOutputChannels >= 2)
-            printf("%d: %s (WASAPI)\n", i, info->name);
+        if (host && host->type == paWASAPI && info->maxOutputChannels >= 2) {
+            WAVEFORMATEXTENSIBLE mix = {0};
+            int bytes = PaWasapi_GetDeviceMixFormat(&mix, sizeof mix, i);
+            if (bytes >= (int)sizeof(WAVEFORMATEX))
+                printf("%d: %s (WASAPI shared, %u Hz mix)\n", i, info->name,
+                       (unsigned)mix.Format.nSamplesPerSec);
+            else
+                printf("%d: %s (WASAPI shared, mix rate unknown)\n", i, info->name);
+        }
     }
     return 0;
 }
 audio_output *audio_output_open(uint32_t rate, int index) {
     PaStreamParameters output = {0};
     PaWasapiStreamInfo wasapi = {0};
+    WAVEFORMATEXTENSIBLE mix = {0};
+    int mix_bytes;
     PaHostApiIndex api = Pa_HostApiTypeIdToHostApiIndex(paWASAPI);
     const PaHostApiInfo *host;
     const PaDeviceInfo *info;
@@ -42,17 +52,38 @@ audio_output *audio_output_open(uint32_t rate, int index) {
         fprintf(stderr, "Select a stereo WASAPI device with --list-devices / --device.\n");
         return NULL;
     }
+    /* Shared WASAPI permits other apps to use this audio endpoint.
+     * Critically, do NOT enable paWinWasapiAutoConvert: resampling the
+     * 192 kHz MPX stream to a usual 48 kHz mix removes the 57 kHz RDS.
+     * Refuse to run unless the actual Windows mixer rate is 192 kHz.
+     */
+    mix_bytes = PaWasapi_GetDeviceMixFormat(&mix, sizeof mix, output.device);
+    if (mix_bytes < (int)sizeof(WAVEFORMATEX)) {
+        fprintf(stderr, "Cannot read the Windows shared-mode mix format for '%s'.\n",
+                info->name);
+        return NULL;
+    }
+    if (mix.Format.nSamplesPerSec != rate) {
+        fprintf(stderr,
+                "Windows shared-mode format for '%s' is %u Hz; NanoRDS requires %u Hz "
+                "to preserve the 57 kHz RDS subcarrier.\n"
+                "Set this device's Default Format to 192000 Hz in the Windows Sound "
+                "control panel (mmsys.cpl > Playback > Properties > Advanced).\n"
+                "Automatic conversion to a lower rate would destroy the RDS signal.\n",
+                info->name, (unsigned)mix.Format.nSamplesPerSec, (unsigned)rate);
+        return NULL;
+    }
     wasapi.size = sizeof wasapi;
     wasapi.hostApiType = paWASAPI;
     wasapi.version = 1;
-    wasapi.flags = paWinWasapiExclusive | paWinWasapiPolling;
+    wasapi.flags = paWinWasapiPolling;
     output.channelCount = 2;
     output.sampleFormat = paInt16;
     output.suggestedLatency = info->defaultHighOutputLatency;
     output.hostApiSpecificStreamInfo = &wasapi;
     e = Pa_IsFormatSupported(NULL, &output, (double)rate);
     if (e != paFormatIsSupported) {
-        audio_error("Device does not support the required exclusive 192 kHz stream", e);
+        audio_error("Device does not support shared 192 kHz PCM output", e);
         return NULL;
     }
     device = calloc(1, sizeof *device);
