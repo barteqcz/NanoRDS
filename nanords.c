@@ -32,8 +32,7 @@ static void show_help(FILE *stream) {
           "  --stereo N         Pilot level (0-100)\n"
           "  --rds N            RDS level (0-100)\n"
           "  --file PATH        Reload commands on file changes\n"
-          "  --help             Show help\n"
-    )
+          "  --help             Show help\n", stream);
 }
 
 static int run(int argc, char **argv) {
