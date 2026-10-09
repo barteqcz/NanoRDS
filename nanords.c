@@ -33,7 +33,7 @@ static void show_help(FILE *stream) {
           "  --lic HEX          Language code\n"
           "  --stereo N         Pilot level (0-100)\n"
           "  --rds N            RDS level (0-100)\n"
-          "  --file PATH        Reload commands on file changes\n"
+          "  --file PATH        Read commands from a text file\n"
           "  --device N         Windows audio device index\n"
           "  --help             Show help\n"
           "\nExample: nanords --af b 87.7 97.0 --file commands.txt\n", stream);
