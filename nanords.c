@@ -11,7 +11,6 @@
 static void pack_output(const float *input, int16_t *output, size_t frames) {
     for (size_t i = 0; i < frames; ++i) {
         float value = fmaxf(-1.0f, fminf(1.0f, input[i]));
-        /* Retain the original left-only output and its amplitude scale. */
         output[2 * i] = (int16_t)lroundf(value * 16383.5f);
         output[2 * i + 1] = 0;
     }
@@ -34,18 +33,14 @@ static void show_help(void) {
          "  --lic HEX         Language Identification Code, 000..FFF\n"
          "  --stereo PERCENT  Pilot level, 0..100\n"
          "  --rds PERCENT     RDS level, 0..100\n"
-#ifdef _WIN32
-         "  --fifo FILE.txt   Windows: load text commands, reload on changes\n"
-#else
-         "  --fifo PATH       Linux: read commands from an existing FIFO\n"
-#endif
+         "  --file FILE.txt   Load text commands, reload on saved changes\n"
          "  --list-devices    List Windows WASAPI output devices\n"
          "  --device NUMBER   Windows WASAPI output device index\n"
          "  --help            Show this help\n"
 #ifdef _WIN32
-         "Windows: nanords.exe --pi 1234 --ps MyRadio --fifo commands.txt\n"
+         "Windows: nanords.exe --pi 1234 --ps MyRadio --file commands.txt\n"
 #else
-         "Linux: nanords --pi 1234 --ps MyRadio --fifo /tmp/nanords-control\n"
+         "Linux: nanords --pi 1234 --ps MyRadio --file commands.txt\n"
 #endif
          "Use Ctrl+C to stop. Output is 192 kHz stereo, left channel only.");
 }
@@ -117,7 +112,6 @@ static int run(int argc, char **argv) {
                 }
             } else goto bad_option;
 
-            /* Each --af configuration ends at the next CLI option. */
             while (i + 1 < argc && argv[i + 1][0] != '-') {
                 int duplicate = 0;
                 value = argv[++i];
@@ -154,7 +148,7 @@ static int run(int argc, char **argv) {
         } else if (!strcmp(option, "--stereo") || !strcmp(option, "--rds")) {
             if (parse_float(value, 0, 100, &level)) goto bad_option;
             set_carrier_volume((uint8_t)(!strcmp(option, "--rds")), level);
-        } else if (!strcmp(option, "--fifo")) control_name = value;
+        } else if (!strcmp(option, "--file")) control_name = value;
         else if (!strcmp(option, "--device")) {
             if (parse_uint(value, 10, INT_MAX, &number)) goto bad_option;
             device_index = (int)number;
@@ -199,7 +193,7 @@ static int run(int argc, char **argv) {
     pcm = malloc(NUM_MPX_FRAMES_OUT * 2 * sizeof *pcm);
     if (!mpx || !output || !pcm) { fprintf(stderr, "Out of memory.\n"); goto done; }
     if (control_name && open_control_input(control_name)) {
-        fprintf(stderr, "Cannot open --fifo control source '%s'.\n", control_name);
+        fprintf(stderr, "Cannot open --file control source '%s'.\n", control_name);
         goto done;
     }
     device = audio_output_open(OUTPUT_SAMPLE_RATE, device_index);
