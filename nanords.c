@@ -10,6 +10,7 @@
 static void pack_output(const float *input, int16_t *output, size_t frames) {
     for (size_t i = 0; i < frames; ++i) {
         float value = fmaxf(-1.0f, fminf(1.0f, input[i]));
+        /* Retain the original left-only output and its amplitude scale. */
         output[2 * i] = (int16_t)lroundf(value * 16383.5f);
         output[2 * i + 1] = 0;
     }
@@ -57,6 +58,8 @@ static int run(int argc, char **argv) {
         unsigned long number;
         float level;
         if (!strcmp(option, "--help")) { show_help(stdout); result = EXIT_SUCCESS; goto done; }
+        /* Reject unknown options before checking values, so even a trailing
+         * --unknown gets a useful error instead of "missing value". */
         if (strcmp(option, "--pi") && strcmp(option, "--ps") &&
             strcmp(option, "--rt") && strcmp(option, "--pty") &&
             strcmp(option, "--ptyn") && strcmp(option, "--ms") &&
@@ -114,6 +117,7 @@ static int run(int argc, char **argv) {
                 }
             } else goto bad_option;
 
+            /* Each --af configuration ends at the next CLI option. */
             while (i + 1 < argc && argv[i + 1][0] != '-') {
                 int duplicate = 0;
                 value = argv[++i];
