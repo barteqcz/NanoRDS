@@ -6,7 +6,6 @@
 #include "lib.h"
 #include "audio_output.h"
 #include "platform.h"
-#include <limits.h>
 
 static void pack_output(const float *input, int16_t *output, size_t frames) {
     for (size_t i = 0; i < frames; ++i) {
@@ -32,8 +31,7 @@ static void show_help(FILE *stream) {
           "  --lic HEX          Language code\n"
           "  --stereo N         Pilot level (0-100)\n"
           "  --rds N            RDS level (0-100)\n"
-          "  --file PATH        Read commands from a text file\n"
-          "  --device N         Windows audio device index\n"
+          "  --file PATH        Reload commands on file changes\n"
           "  --help             Show help\n"
           "\nExample: nanords --af b 87.7 97.0 --file commands.txt\n", stream);
 }
@@ -52,7 +50,7 @@ static int run(int argc, char **argv) {
     audio_output *device = NULL;
     float *mpx = NULL, *output = NULL;
     int16_t *pcm = NULL;
-    int result = EXIT_FAILURE, audio_ready = 0, device_index = -1;
+    int result = EXIT_FAILURE, audio_ready = 0;
 
     if (init_rds_encoder(defaults) != 0) goto done;
     for (int i = 1; i < argc; ++i) {
@@ -66,8 +64,7 @@ static int run(int argc, char **argv) {
             strcmp(option, "--tp") && strcmp(option, "--di") &&
             strcmp(option, "--af") && strcmp(option, "--ecc") &&
             strcmp(option, "--lic") && strcmp(option, "--stereo") &&
-            strcmp(option, "--rds") && strcmp(option, "--file") &&
-            strcmp(option, "--device")) {
+            strcmp(option, "--rds") && strcmp(option, "--file")) {
             fprintf(stderr, "Unknown option: %s\n", option);
             goto usage_error;
         }
@@ -155,10 +152,7 @@ static int run(int argc, char **argv) {
             if (parse_float(value, 0, 100, &level)) goto bad_option;
             set_carrier_volume((uint8_t)(!strcmp(option, "--rds")), level);
         } else if (!strcmp(option, "--file")) control_name = value;
-        else if (!strcmp(option, "--device")) {
-            if (parse_uint(value, 10, INT_MAX, &number)) goto bad_option;
-            device_index = (int)number;
-        } else goto bad_option;
+        else goto bad_option;
         continue;
     bad_option:
         fprintf(stderr, "Invalid option or value: %s %s\n", option, value);
@@ -201,7 +195,7 @@ static int run(int argc, char **argv) {
         fprintf(stderr, "Cannot open --file control source '%s'.\n", control_name);
         goto done;
     }
-    device = audio_output_open(OUTPUT_SAMPLE_RATE, device_index);
+    device = audio_output_open(OUTPUT_SAMPLE_RATE);
     if (!device) { fprintf(stderr, "Unable to open the 192 kHz audio output.\n"); goto done; }
     if (control_name) fprintf(stderr, "Control source: %s\n", control_name);
     fprintf(stderr, "NanoRDS running; press Ctrl+C to stop.\n");
@@ -234,7 +228,7 @@ static int run(int argc, char **argv) {
                         if (poll_control_input()) goto done;
                         msleep(250);
                     }
-                    if (!platform_stop_requested()) device = audio_output_open(OUTPUT_SAMPLE_RATE, device_index);
+                    if (!platform_stop_requested()) device = audio_output_open(OUTPUT_SAMPLE_RATE);
                 }
             }
         }
