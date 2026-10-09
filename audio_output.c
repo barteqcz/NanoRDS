@@ -1,7 +1,6 @@
 #include "common.h"
 #include "audio_output.h"
 #ifdef _WIN32
-/* Windows SDK types must be declared before including mmreg.h. */
 #include <windows.h>
 #include <mmreg.h>
 #include <portaudio.h>
@@ -34,7 +33,7 @@ int audio_output_list(void) {
     }
     return 0;
 }
-audio_output *audio_output_open(uint32_t rate, int index) {
+audio_output *audio_output_open(uint32_t rate) {
     PaStreamParameters output = {0};
     PaWasapiStreamInfo wasapi = {0};
     WAVEFORMATEXTENSIBLE mix = {0};
@@ -48,17 +47,13 @@ audio_output *audio_output_open(uint32_t rate, int index) {
         fprintf(stderr, "This PortAudio build has no WASAPI backend.\n");
         return NULL;
     }
-    output.device = index < 0 ? host->defaultOutputDevice : index;
+    output.device = host->defaultOutputDevice;
     info = Pa_GetDeviceInfo(output.device);
     if (!info || info->hostApi != api || info->maxOutputChannels < 2) {
-        fprintf(stderr, "Select a stereo WASAPI output device with --device N, or check Windows Sound settings.\n");
+        fprintf(stderr, "The default Windows playback device must support stereo WASAPI output (check Windows Sound settings).\n");
         return NULL;
     }
-    /* Shared WASAPI permits other apps to use this audio endpoint.
-     * Critically, do NOT enable paWinWasapiAutoConvert: resampling the
-     * 192 kHz MPX stream to a usual 48 kHz mix removes the 57 kHz RDS.
-     * Refuse to run unless the actual Windows mixer rate is 192 kHz.
-     */
+
     mix_bytes = PaWasapi_GetDeviceMixFormat(&mix, sizeof mix, output.device);
     if (mix_bytes < (int)sizeof(WAVEFORMATEX)) {
         fprintf(stderr, "Cannot read the Windows shared-mode mix format for '%s'.\n",
@@ -128,13 +123,9 @@ int audio_output_list(void) {
     puts("Linux uses the default libao output device and its configuration.");
     return 0;
 }
-audio_output *audio_output_open(uint32_t rate, int index) {
+audio_output *audio_output_open(uint32_t rate) {
     ao_sample_format format = {0};
     audio_output *device;
-    if (index >= 0) {
-        fprintf(stderr, "--device is a Windows option; configure libao on Linux.\n");
-        return NULL;
-    }
     device = calloc(1, sizeof *device);
     if (!device) return NULL;
     format.channels = 2;
