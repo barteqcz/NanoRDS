@@ -33,7 +33,6 @@ static void show_help(FILE *stream) {
           "  --rds N            RDS level (0-100)\n"
           "  --file PATH        Reload commands on file changes\n"
           "  --help             Show help\n"
-          "\nExample: nanords --af b 87.7 97.0 --file commands.txt\n", stream);
 }
 
 static int run(int argc, char **argv) {
