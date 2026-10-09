@@ -10,14 +10,13 @@
 static void pack_output(const float *input, int16_t *output, size_t frames) {
     for (size_t i = 0; i < frames; ++i) {
         float value = fmaxf(-1.0f, fminf(1.0f, input[i]));
-        /* Retain the original left-only output and its amplitude scale. */
         output[2 * i] = (int16_t)lroundf(value * 16383.5f);
         output[2 * i + 1] = 0;
     }
 }
 
 static void show_help(FILE *stream) {
-    fputs("Usage: nanords [options]\n"
+    fputs("\nUsage: nanords [options]\n"
           "  --pi HEX           Program ID / RBDS callsign\n"
           "  --ps TEXT          Station name\n"
           "  --rt TEXT          RadioText\n"
