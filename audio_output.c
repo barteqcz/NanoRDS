@@ -1,6 +1,7 @@
 #include "common.h"
 #include "audio_output.h"
 #ifdef _WIN32
+/* Windows SDK types must be declared before including mmreg.h. */
 #include <windows.h>
 #include <mmreg.h>
 #include <portaudio.h>
@@ -50,7 +51,7 @@ audio_output *audio_output_open(uint32_t rate, int index) {
     output.device = index < 0 ? host->defaultOutputDevice : index;
     info = Pa_GetDeviceInfo(output.device);
     if (!info || info->hostApi != api || info->maxOutputChannels < 2) {
-        fprintf(stderr, "Select a stereo WASAPI device with --list-devices / --device.\n");
+        fprintf(stderr, "Select a stereo WASAPI output device with --device N, or check Windows Sound settings.\n");
         return NULL;
     }
     /* Shared WASAPI permits other apps to use this audio endpoint.
