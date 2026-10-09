@@ -62,11 +62,7 @@ audio_output *audio_output_open(uint32_t rate) {
     }
     if (mix.Format.nSamplesPerSec != rate) {
         fprintf(stderr,
-                "Windows shared-mode format for '%s' is %u Hz; NanoRDS requires %u Hz "
-                "to preserve the 57 kHz RDS subcarrier.\n"
-                "Set this device's Default Format to 192000 Hz in the Windows Sound "
-                "control panel (mmsys.cpl > Playback > Properties > Advanced).\n"
-                "Automatic conversion to a lower rate would destroy the RDS signal.\n",
+                "Windows shared-mode format for '%s' is %u Hz; NanoRDS requires %u Hz to preserve the 57 kHz RDS subcarrier.\n"
                 info->name, (unsigned)mix.Format.nSamplesPerSec, (unsigned)rate);
         return NULL;
     }
