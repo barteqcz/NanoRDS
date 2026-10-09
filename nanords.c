@@ -11,38 +11,32 @@
 static void pack_output(const float *input, int16_t *output, size_t frames) {
     for (size_t i = 0; i < frames; ++i) {
         float value = fmaxf(-1.0f, fminf(1.0f, input[i]));
+        /* Retain the original left-only output and its amplitude scale. */
         output[2 * i] = (int16_t)lroundf(value * 16383.5f);
         output[2 * i + 1] = 0;
     }
 }
 
-static void show_help(void) {
-    puts("Usage: nanords [options]\n"
-         "  --pi HEX          Program Identification (or RBDS callsign)\n"
-         "  --ps TEXT         Program Service (8 RDS characters)\n"
-         "  --rt TEXT         RadioText (64 RDS characters)\n"
-         "  --pty NUMBER      Program Type, 0..31\n"
-         "  --ptyn TEXT       Program Type Name (8 RDS characters)\n"
-         "  --ms 0|1          Music/speech flag\n"
-         "  --tp 0|1          Traffic Program flag\n"
-         "  --di NUMBER       Decoder Information, 0..15\n"
-         "  --af a MHz...     Method A: list of alternative frequencies\n"
-         "  --af b TX MHz... [regional MHz...]\n"
-         "                    Method B: TX is the transmitter frequency\n"
-         "  --ecc HEX         Extended Country Code, 00..FF\n"
-         "  --lic HEX         Language Identification Code, 000..FFF\n"
-         "  --stereo PERCENT  Pilot level, 0..100\n"
-         "  --rds PERCENT     RDS level, 0..100\n"
-         "  --file FILE.txt   Load text commands, reload on saved changes\n"
-         "  --list-devices    List Windows WASAPI output devices\n"
-         "  --device NUMBER   Windows WASAPI output device index\n"
-         "  --help            Show this help\n"
-#ifdef _WIN32
-         "Windows: nanords.exe --pi 1234 --ps MyRadio --file commands.txt\n"
-#else
-         "Linux: nanords --pi 1234 --ps MyRadio --file commands.txt\n"
-#endif
-         "Use Ctrl+C to stop. Output is 192 kHz stereo, left channel only.");
+static void show_help(FILE *stream) {
+    fputs("Usage: nanords [options]\n"
+          "  --pi HEX           Program ID / RBDS callsign\n"
+          "  --ps TEXT          Station name\n"
+          "  --rt TEXT          RadioText\n"
+          "  --pty N            Programme type (0-31)\n"
+          "  --ptyn TEXT        Programme type name\n"
+          "  --ms 0|1           Music/speech\n"
+          "  --tp 0|1           Traffic programme\n"
+          "  --di N             Decoder info (0-15)\n"
+          "  --af a FREQ...     AF Method A\n"
+          "  --af b TX FREQ... [regional FREQ...]  AF Method B\n"
+          "  --ecc HEX          Extended country code\n"
+          "  --lic HEX          Language code\n"
+          "  --stereo N         Pilot level (0-100)\n"
+          "  --rds N            RDS level (0-100)\n"
+          "  --file PATH        Reload commands on file changes\n"
+          "  --device N         Windows audio device index\n"
+          "  --help             Show help\n"
+          "\nExample: nanords --af b 87.7 97.0 --file commands.txt\n", stream);
 }
 
 static int run(int argc, char **argv) {
@@ -59,16 +53,31 @@ static int run(int argc, char **argv) {
     audio_output *device = NULL;
     float *mpx = NULL, *output = NULL;
     int16_t *pcm = NULL;
-    int result = EXIT_FAILURE, audio_ready = 0, device_index = -1, list_devices = 0;
+    int result = EXIT_FAILURE, audio_ready = 0, device_index = -1;
 
     if (init_rds_encoder(defaults) != 0) goto done;
     for (int i = 1; i < argc; ++i) {
         const char *option = argv[i], *value;
         unsigned long number;
         float level;
-        if (!strcmp(option, "--help")) { show_help(); result = EXIT_SUCCESS; goto done; }
-        if (!strcmp(option, "--list-devices")) { list_devices = 1; continue; }
-        if (i + 1 == argc) { fprintf(stderr, "Missing value for %s\n", option); goto done; }
+        if (!strcmp(option, "--help")) { show_help(stdout); result = EXIT_SUCCESS; goto done; }
+        /* Reject unknown options before checking values, so even a trailing
+         * --unknown gets a useful error instead of "missing value". */
+        if (strcmp(option, "--pi") && strcmp(option, "--ps") &&
+            strcmp(option, "--rt") && strcmp(option, "--pty") &&
+            strcmp(option, "--ptyn") && strcmp(option, "--ms") &&
+            strcmp(option, "--tp") && strcmp(option, "--di") &&
+            strcmp(option, "--af") && strcmp(option, "--ecc") &&
+            strcmp(option, "--lic") && strcmp(option, "--stereo") &&
+            strcmp(option, "--rds") && strcmp(option, "--file") &&
+            strcmp(option, "--device")) {
+            fprintf(stderr, "Unknown option: %s\n", option);
+            goto usage_error;
+        }
+        if (i + 1 == argc || !strncmp(argv[i + 1], "--", 2)) {
+            fprintf(stderr, "Missing value for %s\n", option);
+            goto usage_error;
+        }
         value = argv[++i];
         if (!strcmp(option, "--pi")) {
 #ifdef RBDS
@@ -100,7 +109,7 @@ static int run(int argc, char **argv) {
             int regional = 0, needs_regional_frequency = 0;
             if (af_specified++) {
                 fprintf(stderr, "Specify --af only once, with a or b and its frequencies.\n");
-                goto done;
+                goto usage_error;
             }
             if (!strcmp(value, "a")) af_method = AF_METHOD_A;
             else if (!strcmp(value, "b")) {
@@ -108,10 +117,11 @@ static int run(int argc, char **argv) {
                 if (i + 1 == argc || argv[i + 1][0] == '-' ||
                     parse_float(argv[++i], 87.6f, 107.9f, &af_tuned)) {
                     fprintf(stderr, "--af b requires a transmitter frequency first.\n");
-                    goto done;
+                    goto usage_error;
                 }
             } else goto bad_option;
 
+            /* Each --af configuration ends at the next CLI option. */
             while (i + 1 < argc && argv[i + 1][0] != '-') {
                 int duplicate = 0;
                 value = argv[++i];
@@ -137,7 +147,7 @@ static int run(int argc, char **argv) {
             }
             if ((!af_same_count && !af_regional_count) || needs_regional_frequency) {
                 fprintf(stderr, "--af requires frequencies; 'regional' must be followed by frequencies.\n");
-                goto done;
+                goto usage_error;
             }
         } else if (!strcmp(option, "--ecc")) {
             if (parse_uint(value, 16, 255, &number)) goto bad_option;
@@ -156,37 +166,36 @@ static int run(int argc, char **argv) {
         continue;
     bad_option:
         fprintf(stderr, "Invalid option or value: %s %s\n", option, value);
-        goto done;
+        goto usage_error;
     }
     if (af_method == AF_METHOD_B) {
         if (init_rds_af_method_b(&frequencies, af_tuned)) {
-            fprintf(stderr, "Invalid AF Method B transmitter frequency (87.6..107.9 MHz, 0.1 MHz steps).\n");
-            goto done;
+            fprintf(stderr, "Invalid AF Method B transmitter frequency (87.6..107.9 in 0.1 steps).\n");
+            goto usage_error;
         }
         for (size_t i = 0; i < af_same_count; ++i) {
             if (add_rds_af_method_b(&frequencies, af_same[i], 0)) {
                 fprintf(stderr, "Invalid or duplicate Method B AF, or over 12 alternatives.\n");
-                goto done;
+                goto usage_error;
             }
         }
         for (size_t i = 0; i < af_regional_count; ++i) {
             if (add_rds_af_method_b(&frequencies, af_regional[i], 1)) {
                 fprintf(stderr, "Invalid or duplicate Method B regional AF, or over 12 alternatives.\n");
-                goto done;
+                goto usage_error;
             }
         }
     } else {
         for (size_t i = 0; i < af_same_count; ++i) {
             if (add_rds_af(&frequencies, af_same[i])) {
                 fprintf(stderr, "Invalid Method A alternative frequency.\n");
-                goto done;
+                goto usage_error;
             }
         }
     }
     set_rds_af(frequencies);
     if (platform_init_shutdown() || audio_output_init()) goto done;
     audio_ready = 1;
-    if (list_devices) { result = audio_output_list() == 0 ? EXIT_SUCCESS : EXIT_FAILURE; goto done; }
     if (fm_mpx_init(MPX_SAMPLE_RATE) || resampler_init(&converter, 1)) goto done;
     mpx = malloc(NUM_MPX_FRAMES_IN * sizeof *mpx);
     output = malloc(NUM_MPX_FRAMES_OUT * sizeof *output);
@@ -235,6 +244,10 @@ static int run(int argc, char **argv) {
         }
     }
     result = EXIT_SUCCESS;
+    goto done;
+ usage_error:
+    fputc('\n', stderr);
+    show_help(stderr);
  done:
     close_control_input();
     audio_output_close(device);
