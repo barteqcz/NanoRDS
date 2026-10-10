@@ -74,7 +74,7 @@
                 <p>The RDS frequency is fixed at <b>57 kHz</b> in source; there is no frequency flag or Makefile override. <code>make install</code>, <code>make uninstall</code> and <code>make package</code> are not provided by the current Makefile.</p>
                 <h1 id="cli-arguments" style="scroll-margin-top: 150px; margin-top: 60px;">Command-line arguments</h1>
                 <p>Use <code>nanords --help</code> (or <code>nanords.exe --help</code> on Windows) for the current argument list. Incorrect options or values also display help.</p>
-                <div class="codebox"><code style="white-space: pre-wrap;">nanords --pi 2335 --ps FAJN --rt "FAJN RADIO" --pty 10
+                <div class="codebox"><code style="white-space: pre-wrap;">nanords --pi 1234 --ps SAMPLE --rt "Example RadioText" --pty 10
 nanords --af a 87.7 98.0 88.6
 nanords --af b 87.7 97.2 94.4 regional 105.2 94.1
 nanords --file commands.txt</code></div>
@@ -86,25 +86,16 @@ nanords --file commands.txt</code></div>
                 <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">./build/linux/nanords --file commands.txt</code></div>
                 <p>On Windows, run:</p>
                 <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">./build/windows/nanords.exe --file commands.txt</code></div>
-                <p>For example, put the following lines in <code>commands.txt</code>:</p>
-                <div class="codebox"><code style="white-space: pre-wrap;">PS FAJN
-RT FAJN RADIO - Always fresh
-PI 2335
-PTY 10
-MS 1
-AF b 87.7 97.2 94.4 regional 105.2 94.1
-STEREO 9
-RDS 4.5</code></div>
                 <p>Edit and save the file while NanoRDS is running to apply your changes. Use one command per line. UTF-8 text, LF and CRLF line endings are supported. The file must exist at startup and can be up to 64 KiB.</p>
                 <p><b>Important:</b> removing a line from the file does not automatically reverse its last setting. Send a new value, <code>AF c</code> to clear AF, or <code>RESET</code> to restore defaults. Each new <code>AF a</code> or <code>AF b</code> command replaces the previous AF list.</p>
                 <h1 id="file-commands" style="scroll-margin-top: 150px; margin-top: 60px;">Text-file commands</h1>
                 <h2>Station identification and RadioText</h2>
                 <p><b>PS</b> — Programme Service name, up to 8 characters.</p>
-                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PS FAJN</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PS SAMPLE</code></div>
                 <p><b>RT</b> — RadioText, up to 64 characters.</p>
-                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">RT FAJN RADIO - Always fresh</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">RT Example RadioText message</code></div>
                 <p><b>PI</b> — 16-bit hexadecimal Programme Identification code. With an RBDS build, applicable North American callsigns may also be accepted.</p>
-                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PI 2335</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PI 1234</code></div>
                 <p><b>PTY</b> — Programme Type code (0–31). See <a style="color: white;" href="#pty-codes">PTY codes</a> below. <b>PTYN</b> — extended programme-type name, up to 8 characters (use <code>PTYN -</code> to clear).</p>
                 <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PTY 10</code></div>
                 <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PTYN POP</code></div>
