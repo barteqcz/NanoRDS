@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="NanoRDS - software RDS encoder for Linux">
+    <meta name="description" content="NanoRDS - software RDS encoder for Linux and Windows">
     <meta name="keywords" content="nanords, rds, encoder">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="NanoRDS">
@@ -12,7 +12,7 @@
     <link rel="icon" type="image/x-icon" href="../../imgs/favicon.ico">
     <script src="../../script.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <title>Wiki | NanoRDS - software RDS encoder for Linux.</title>
+    <title>Wiki | NanoRDS - software RDS encoder for Linux and Windows</title>
 </head>
 <body>
     <header class="flex-container">
@@ -28,9 +28,9 @@
             </div>
             <nav class="menu-desktop">
                 <a class="hover-underline-animation" href="#installation"><b>Installation</b></a>
-                <a class="hover-underline-animation" href="#cli-arguments"><b>Command-line arguments</b></a>
-                <a class="hover-underline-animation" href="#fifo-creation"><b>FIFO creation</b></a>
-                <a class="hover-underline-animation" href="#fifo-commands"><b>FIFO Commands</b></a>
+                <a class="hover-underline-animation" href="#cli-arguments"><b>CLI arguments</b></a>
+                <a class="hover-underline-animation" href="#file-control"><b>Text-file control</b></a>
+                <a class="hover-underline-animation" href="#file-commands"><b>File commands</b></a>
                 <a class="hover-underline-animation" href="#pty-codes"><b>PTY codes</b></a>
             </nav>
             <nav class="menu-mobile"><i class="fa fa-bars menu-mobile-icon" onclick="hamburgerMenu()"></i></nav>
@@ -39,96 +39,109 @@
     <main>
         <div id="myLinks" onclick="hamburgerMenu()">
             <a href="#installation"><b>Installation</b></a>
-            <a href="#cli-arguments"><b>Command-line arguments</b></a>
-            <a href="#fifo-creation"><b>FIFO creation</b></a>
-            <a href="#fifo-commands"><b>FIFO Commands</b></a>
+            <a href="#cli-arguments"><b>CLI arguments</b></a>
+            <a href="#file-control"><b>Text-file control</b></a>
+            <a href="#file-commands"><b>File commands</b></a>
             <a href="#pty-codes"><b>PTY codes</b></a>
         </div>
         <div id="main4">
             <div class="documentation">
-                <h2 id="installation" style="margin-top: 15px; font-size: 40px; scroll-margin-top: 150px;">Installation</h1>
-                <h2>Dependencies</h2>
-                <p style="margin-bottom: 40px;">NanoRDS needs a few dependency packages in order to work.</p>
-                <p style="margin-bottom: 5px;"><b>Debian-based distros:</b></p><div class="codebox"><code>sudo apt install libao-dev libsamplerate0-dev</code></div>
-                <p style="margin-bottom: 5px; margin-top: 40px;"><b>Arch-based distros:</b></p><div class="codebox"><code>sudo pacman -S libao libsamplerate</code></div>
-                <p style="margin-bottom: 5px; margin-top: 40px;"><b>Fedora-based distros:</b></p><div class="codebox"><code>sudo dnf install libao-devel libsamplerate-devel</code></div>
-                <h2 style="margin-top: 60px;">Downloading</h2>
-                <p style="margin-bottom: 5px;">You can either download the software using the download button on this website, or using git:</p>
-                <div class="codebox"><code>git clone https://github.com/barteqcz/NanoRDS</code></div>
-                <h2 style="margin-top: 60px;">Compilation</h2>
-                <p style="margin-bottom: 20px;">The Makefile shipped with NanoRDS provides a few options:</p>
-                <ul>
-                    <li><code><b>make</b></code> - compiles the program.</li>
-                    <li><code><b>make install</b></code> - compiles the program and installs it system-wide, so that running <code>nanords</code> anywhere in the system, runs the encoder.</li>
-                    <li><code><b>make uninstall</b></code> - uninstalls the program system-wide, so that running <code>nanords</code> anywhere in the system, won't run the encoder anymore.</li>
-                    <li><code><b>make clean</b></code> - removes all the .o files and the executable file from NanoRDS directory.</li>
-                </ul>
-                <p style="margin-top: 40px; margin-bottom: 5px;">To run the encoder that was installed system-wide, run this anywhere:</p>
-                <div class="codebox"><code>nanords</code></div><br><br>
-                <p style="margin-bottom: 5px;">To run the encoder that wasn't installed system-wide, run this in the NanoRDS directory:</p>
-                <div class="codebox"><code>./nanords</code></div>
-                <p style="margin-top: 40px; font-size: 18px;"><b>Notice</b>: both <b><code>make install</code></b> and <b><code>make uninstall</code></b> have to be run as root (e.g. <b><code>sudo make install</code></b> or <b><code>sudo make uninstall</code></b>)</p>
+                <h1 id="installation" style="margin-top: 15px; font-size: 40px; scroll-margin-top: 150px;">Installation</h1>
+                <p>NanoRDS is a software RDS encoder for <b>Linux and Windows</b>. It generates a 57 kHz RDS subcarrier and a separate 19 kHz stereo pilot, with 192 kHz audio output. The same GNU Makefile is used on both systems.</p>
+                <h2>Download</h2>
+                <p>Download ready-built binaries from <a href="https://github.com/barteqcz/NanoRDS/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a>, or clone the source code:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">git clone https://github.com/barteqcz/NanoRDS</code></div>
+                <p style="margin-top: 40px;">For a source build, install the development libraries for your operating system. Third-party libraries are not bundled with the source.</p>
+                <h2>Linux (Debian / Ubuntu)</h2>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">sudo apt update &amp;&amp; sudo apt install build-essential pkg-config libsamplerate0-dev libao-dev</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">make</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">./build/linux/nanords --help</code></div>
+                <p><b>Other Linux distributions:</b> install GNU Make, GCC, pkg-config, libao and libsamplerate from your package manager (including the development headers), then run <code>make</code>.</p>
+                <h2>Windows (MSYS2 UCRT64)</h2>
+                <p>Install <a href="https://www.msys2.org/" target="_blank" rel="noopener noreferrer">MSYS2</a> and open the <b>UCRT64</b> terminal, not the plain MSYS terminal. Install the required packages:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">pacman -S --needed make mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-pkgconf mingw-w64-ucrt-x86_64-libsamplerate mingw-w64-ucrt-x86_64-portaudio</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">make</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">./build/windows/nanords.exe --help</code></div>
+                <p>When running a locally built executable outside MSYS2, Windows must be able to find its runtime DLLs (for example, <code>libsamplerate-0.dll</code> and <code>libportaudio.dll</code>). Copy the required DLLs beside <code>nanords.exe</code>, or run it with the appropriate MSYS2 runtime directory in your <code>PATH</code>. Windows release archives bundle the runtime dependencies.</p>
+                <h2>Audio output and build options</h2>
+                <p>NanoRDS uses the <b>default audio output device</b> on both systems. Windows uses PortAudio WASAPI <b>shared mode</b>, so other applications can play simultaneously. There is no <code>--device</code> or <code>--list-devices</code> argument.</p>
+                <p>For Windows, set the default playback device to <b>192000 Hz</b> in <b>Sound → Playback → Properties → Advanced</b> (you can open the Sound dialog with <code>mmsys.cpl</code>). NanoRDS rejects incompatible shared-mode mixer rates to avoid losing the 57 kHz RDS subcarrier. Other system sounds or audio enhancements can contaminate the signal sent to a transmitter.</p>
+                <p>The program outputs the FM multiplex signal on the <b>left audio channel</b> and silence on the right. It does not take music/audio input. The audio hardware and the complete playback chain must preserve the 192 kHz waveform.</p>
+                <p>The Makefile supports these commands:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">make                 # compile</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">make clean           # remove generated build files</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">make clean &amp;&amp; make RBDS=1    # build with RBDS support</code></div>
+                <p>The RDS frequency is fixed at <b>57 kHz</b> in source; there is no frequency flag or Makefile override. <code>make install</code>, <code>make uninstall</code> and <code>make package</code> are not provided by the current Makefile.</p>
                 <h1 id="cli-arguments" style="scroll-margin-top: 150px; margin-top: 60px;">Command-line arguments</h1>
-                <p>To list all the available command-line arguments, run:</p>
-                <div class="codebox"><code>nanords --help</code></div>
-                <h1 id="fifo-creation" style="scroll-margin-top: 150px; margin-top: 60px;">FIFO creation</h1>
-                <p>Create the control pipe:</p>
-                <div class="codebox"><code>mkfifo rdsfifo</code></div><br>
-                <p>Run NanoRDS with the appropriate flag:</p>
-                <div class="codebox"><code>nanords --fifo rdsfifo</code></div><br>
-                <p>Now you can send commands to fifo, to control the RDS (manually, or using some automated script). Every line must start with a valid command, followed by one space character, and the desired value. Any other line format is silently ignored.</p>
-                <p><b>Notice</b>: If you create the FIFO pipe in a directory other than where the NanoRDS executable is located, be sure to specify the full path to the FIFO pipe when running NanoRDS.</p>
-                <h1 id="fifo-commands" style="scroll-margin-top: 150px; margin-top: 60px;">FIFO Commands</h1>
-                <p><b>PS</b> - stands for Program Service name and it allows to broadcast a 'title' for the station that is displayed on every receiver with RDS support (that's the most basic feature). Its length can be up to 8 characters. This is how you can set it in NanoRDS via fifo</p>
-                <div class="codebox"><code>PS * RDS *</code></div><br><br>
-                <p><b>RT</b> - stands for RadioText and is basically a longer message that is displayed in most RDS receivers. It can contain up to 64 characters, and here's how you can set it</p>
-                <div class="codebox"><code>RT This is a RadioText message :)</code></div><br><br>
-                <p><b>RTPF</b> - a 2-bit integer, applicable when you want to transmit RT+. It sets RT+ flags - 'running' and 'toggle'</p>
-                <ul>
-                    <li>RTPF 0 - unsets both flags,</li>
-                    <li>RTPF 1 - sets the toggle flag,</li>
-                    <li>RTPF 2 - sets the running flag,</li>
-                    <li>RTPF 3 - sets both flags</li>
-                </ul>
-                <p>Example usage:</p>
-                <div class="codebox"><code>RTPF 2</code></div><br><br>
-                <p><b>RTP</b> - provides data for the RT+ group (in NanoRDS, RT+ is transmitted in 11A group). Its format is</p>
-                <div class="codebox"><code>content type 1, start 1, length 1, content type 2, start 2, length 2</code></div><br>
-                <p>It takes data from the RT. Example usage:</p>
-                <div class="codebox"><code>RTP 4,0,6,1,9,8</code></div><br><br>
-                <p><b>PTY</b> - defines Program Type, so basically what content does the station broadcast. In NanoRDS, PTY is set using a code.</p>
-                <div class="codebox"><code>PTY 10</code></div>
-                <p><b>Notice</b>: list of all the PTY codes can be found <a style="color: white;" href="#pty-codes">here</a></p><br><br>
-                <p><b>PTYN</b> - basically a PTY extension. Able to hold up to 8 characters, typically used to add some additional info about the broadcast content type.</p>
-                <div class="codebox"><code>PTYN CHR</code></div><br><br>
-                <p><b>PI</b> - Program Identification is a unique 16-bit hexadecimal, 4-character code that identifies the station. Here's how you can set it in NanoRDS</p>
-                <div class="codebox"><code>PI 2F08</code></div><br><br>
-                <p><b>AF</b> - AF means Alternative Frequencies and allows the receiver to switch between the frequencies you set when the signal weakens. AF has two methods - NanoRDS uses <b>method A,</b> which is usually used - it is more convenient and easier to implement.</p>
-                <p>This is how you can use AF in NanoRDS. It is recommended that the first frequency on the list is the one your current transmitter is on</p>
-                <div class="codebox"><code>AF s 105.1 87.7 96.4</code></div><br>
-                <p>If you wish to clear the AF list, use</p>
-                <div class="codebox"><code>AF c</code></div><br><br>
-                <p><b>ECC</b> - 8-bit hexadecimal code that defines country of origin of the station. It can be the same for many countries, since the second condition for country identification is the PI code. If you want to disable it, set its value to 0</p>
-                <div class="codebox"><code>ECC E2</code></div><br><br>
-                <p><b>LIC</b> - 8-bit hexadecimal code - its value defines the language of the station. If you want to disable it, set its value to 0</p>
-                <div class="codebox"><code>LIC 06</code></div><br><br>
-                <p><b>MS</b> - music/speech flag. Music is 1 and speech is 0.</p>
-                <div class="codebox"><code>MS 1</code></div><br><br>
-                <p><b>TP</b> - Traffic Program flag. Defines whether station broadcasts traffic info. If yes, it's set to 1; if no, it's set to 0</p>
-                <div class="codebox"><code>TP 1</code></div><br><br>
-                <p><b>TA</b> - Traffic Announcement flag - signals that there are traffic announcements being broadcasted at the moment</p>
-                <div class="codebox"><code>TA 1</code></div><br><br>
-                <p><b>DI</b> - Decoder Information - identifies different operating modes. This enables controlling of individual decoders. Additionally it indicates if static or dynamic PTY codes are transmitted.</p>
-                <div class="codebox"><code>DI 1</code></div><br><br>
-                <p><b>STEREO</b> - controls the stereo pilot volume.</p>
-                <div class="codebox"><code>STEREO 9</code></div>
-                <p>If you want to disable Stereo pilot, simply set its value to 0.</p><br>
-                <p><b>RDS</b> - controls the RDS subcarrier volume.</p>
-                <div class="codebox"><code>RDS 4.5</code></div>
-                <p>If you want to disable RDS subcarrier, simply set its value to 0.</p>
-                <p><b>Notice</b>: the levels of RDS and stereo subcarriers will only be accurate if your system output volume is set to 0dB.</p><br>
-                <p><b>RESET</b> - doesn't take any arguments - resets all the encoder parameters to the default ones</p>
-                <div class="codebox"><code>RESET</code></div><br><br>
+                <p>Use <code>nanords --help</code> (or <code>nanords.exe --help</code> on Windows) for the current argument list. Incorrect options or values also display help.</p>
+                <div class="codebox"><code style="white-space: pre-wrap;">nanords --pi 2335 --ps FAJN --rt "FAJN RADIO" --pty 10
+nanords --af a 87.7 98.0 88.6
+nanords --af b 87.7 97.2 94.4 regional 105.2 94.1
+nanords --file commands.txt</code></div>
+                <p>Common options: <code>--pi HEX</code>, <code>--ps TEXT</code>, <code>--rt TEXT</code>, <code>--pty N</code>, <code>--ptyn TEXT</code>, <code>--ms 0|1</code>, <code>--tp 0|1</code>, <code>--di N</code>, <code>--ecc HEX</code>, <code>--lic HEX</code>, <code>--stereo N</code>, <code>--rds N</code>, <code>--af a ...</code>, <code>--af b ...</code> and <code>--file PATH</code>. See <a style="color: white;" href="#file-commands">file commands</a> for dynamic updates and options such as TA, RT+ and CT.</p>
+                <p>AF selection is explicit: Method A uses <code>--af a</code> and Method B uses <code>--af b</code>. The old <code>--af-method</code>, <code>--af-tuned</code>, <code>--af-regional</code>, <code>--fifo</code>, and <code>--device</code> arguments are not supported.</p>
+                <h1 id="file-control" style="scroll-margin-top: 150px; margin-top: 60px;">Text-file control</h1>
+                <p>On <b>both Linux and Windows</b>, <code>--file</code> reads a regular existing text file. No named pipe and no <code>mkfifo</code> are required. NanoRDS loads its contents on startup and checks for saved changes approximately every <b>250 ms</b>.</p>
+                <p>Create a file called <code>commands.txt</code> and start NanoRDS:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">./build/linux/nanords --file commands.txt</code></div>
+                <p>On Windows, run:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">./build/windows/nanords.exe --file commands.txt</code></div>
+                <p>For example, put the following lines in <code>commands.txt</code>:</p>
+                <div class="codebox"><code style="white-space: pre-wrap;">PS FAJN
+RT FAJN RADIO - Always fresh
+PI 2335
+PTY 10
+MS 1
+AF b 87.7 97.2 94.4 regional 105.2 94.1
+STEREO 9
+RDS 4.5</code></div>
+                <p>Edit and save the file while NanoRDS is running to apply your changes. Use one command per line. UTF-8 text, LF and CRLF line endings are supported. The file must exist at startup and can be up to 64 KiB.</p>
+                <p><b>Important:</b> removing a line from the file does not automatically reverse its last setting. Send a new value, <code>AF c</code> to clear AF, or <code>RESET</code> to restore defaults. Each new <code>AF a</code> or <code>AF b</code> command replaces the previous AF list.</p>
+                <h1 id="file-commands" style="scroll-margin-top: 150px; margin-top: 60px;">Text-file commands</h1>
+                <h2>Station identification and RadioText</h2>
+                <p><b>PS</b> — Programme Service name, up to 8 characters.</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PS FAJN</code></div>
+                <p><b>RT</b> — RadioText, up to 64 characters.</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">RT FAJN RADIO - Always fresh</code></div>
+                <p><b>PI</b> — 16-bit hexadecimal Programme Identification code. With an RBDS build, applicable North American callsigns may also be accepted.</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PI 2335</code></div>
+                <p><b>PTY</b> — Programme Type code (0–31). See <a style="color: white;" href="#pty-codes">PTY codes</a> below. <b>PTYN</b> — extended programme-type name, up to 8 characters (use <code>PTYN -</code> to clear).</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PTY 10</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PTYN POP</code></div>
+                <h2>Alternative frequencies (AF)</h2>
+                <p><b>Method A</b> sends an unpaired list of alternative frequencies. Use <code>a</code> on both interfaces:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">AF a 87.7 98.0 88.6</code></div>
+                <p>Equivalent CLI option:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">nanords --af a 87.7 98.0 88.6</code></div>
+                <p><b>Method B</b> sends transmitter-specific <b>frequency pairs</b>. The first value is the frequency of your own transmitter; values after it are same-programme alternatives. Put <code>regional</code> before regional variants:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">AF b 87.7 97.2 94.4 regional 105.2 94.1</code></div>
+                <p>Equivalent CLI option:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">nanords --af b 87.7 97.2 94.4 regional 105.2 94.1</code></div>
+                <p>This example generates the same-programme pairs <code>87.7 → 97.2</code> and <code>87.7 → 94.4</code>, and the regional pairs <code>105.2 → 87.7</code> and <code>94.1 → 87.7</code>. The encoder determines pair order automatically. Frequencies are numbers such as <code>105.7</code>, with <b>no “MHz” suffix</b>.</p>
+                <p>Method B supports up to <b>12 alternatives</b> in one transmitter-specific list. Frequencies must be 87.6–107.9 in steps of 0.1 and must be distinct. If used, <code>regional</code> must be followed by at least one frequency.</p>
+                <p>To clear all alternative frequencies:</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">AF c</code></div>
+                <p><b>Only</b> <code>AF a</code>, <code>AF b</code>, and <code>AF c</code> are valid control-file AF forms. The old <code>AF s</code> command has been removed.</p>
+                <h2>RT+ and flags</h2>
+                <p><b>RTPF</b> sets RT+ flags: 0 = neither, 1 = toggle, 2 = running, 3 = both.</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">RTPF 2</code></div>
+                <p><b>RTP</b> defines two RT+ text tags for the current RadioText. Format: <code>type1,start1,length1,type2,start2,length2</code> (RT+ is sent in RDS group 11A).</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">RTP 4,0,6,1,9,8</code></div>
+                <p><b>MS</b> sets music (1) or speech (0). <b>TP</b> indicates traffic programming, and <b>TA</b> signals a current traffic announcement. <b>DI</b> sets Decoder Identification information (0–15).</p>
+                <div class="codebox"><code style="white-space: pre-wrap;">MS 1
+TP 0
+TA 0
+DI 1</code></div>
+                <p><b>ECC</b> is an extended country code (hexadecimal); <b>LIC</b> is a language code (hexadecimal). <b>CT</b> enables (1) or disables (0) the Clock Time group.</p>
+                <div class="codebox"><code style="white-space: pre-wrap;">ECC E2
+LIC 06
+CT 1</code></div>
+                <p><b>STEREO</b> controls the 19 kHz stereo-pilot level, and <b>RDS</b> controls the 57 kHz subcarrier level (0–100, including decimals). Set either to 0 to disable it.</p>
+                <div class="codebox"><code style="white-space: pre-wrap;">STEREO 9
+RDS 4.5</code></div>
+                <p>For calibrated levels, ensure your output volume and signal chain do not apply unwanted attenuation or processing.</p>
+                <p><b>RESET</b> resets encoder settings to their defaults; it requires no argument.</p>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">RESET</code></div>
                 <h2 id="pty-codes" style="scroll-margin-top: 150px;">PTY codes</h2>
                 <div style="width: 300px;">
                     <label class="toggleSwitch nolabel" onclick="">
@@ -235,7 +248,7 @@
         <div class="flex-container">
             <a style="margin-right: 30px;" class="fadeinout" href="https://github.com/barteqcz/nanords" target="_blank"><img src="../../imgs/github-mark-white.svg" width="50px"></a>
         </div>
-        <p>2024 by barteqcz</p>
+        <p>2024–2026 by barteqcz</p>
     </footer>
 </body>
 </html>
