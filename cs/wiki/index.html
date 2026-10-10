@@ -74,7 +74,7 @@
                 <p>Frekvence RDS je pevně nastavena na <b>57 kHz</b> ve zdrojovém kódu. Nelze ji změnit přepínačem ani parametrem Makefile. Aktuální Makefile nepodporuje <code>make install</code>, <code>make uninstall</code> ani <code>make package</code>.</p>
                 <h1 id="cli-arguments" style="scroll-margin-top: 150px; margin-top: 60px;">Argumenty příkazové řádky</h1>
                 <p>Seznam dostupných přepínačů zobrazíte pomocí <code>nanords --help</code> (ve Windows <code>nanords.exe --help</code>). Nápověda se vypíše také při chybných přepínačích nebo hodnotách.</p>
-                <div class="codebox"><code style="white-space: pre-wrap;">nanords --pi 2335 --ps FAJN --rt "FAJN RADIO" --pty 10
+                <div class="codebox"><code style="white-space: pre-wrap;">nanords --pi 1234 --ps SAMPLE --rt "Ukazkovy RadioText" --pty 10
 nanords --af a 87.7 98.0 88.6
 nanords --af b 87.7 97.2 94.4 regional 105.2 94.1
 nanords --file commands.txt</code></div>
@@ -86,25 +86,16 @@ nanords --file commands.txt</code></div>
                 <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">./build/linux/nanords --file commands.txt</code></div>
                 <p>Ve Windows:</p>
                 <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">./build/windows/nanords.exe --file commands.txt</code></div>
-                <p>Příklad obsahu souboru <code>commands.txt</code>:</p>
-                <div class="codebox"><code style="white-space: pre-wrap;">PS FAJN
-RT FAJN RADIO - Always fresh
-PI 2335
-PTY 10
-MS 1
-AF b 87.7 97.2 94.4 regional 105.2 94.1
-STEREO 9
-RDS 4.5</code></div>
                 <p>Za běhu programu soubor upravte a uložte. Každý příkaz musí být na samostatném řádku. Podporován je text UTF-8 a konce řádků LF i CRLF. Soubor musí existovat při spuštění a může mít nejvýše 64 KiB.</p>
                 <p><b>Důležité:</b> smazání řádku z textového souboru nevrací dříve nastavenou hodnotu. Použijte nový příkaz, <code>AF c</code> pro vymazání AF nebo <code>RESET</code> pro obnovení výchozích nastavení. Každý nový příkaz <code>AF a</code> či <code>AF b</code> nahrazuje předchozí seznam AF.</p>
                 <h1 id="file-commands" style="scroll-margin-top: 150px; margin-top: 60px;">Příkazy v textovém souboru</h1>
                 <h2>Identifikace stanice a RadioText</h2>
                 <p><b>PS</b> — název stanice (Programme Service), maximálně 8 znaků.</p>
-                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PS FAJN</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PS SAMPLE</code></div>
                 <p><b>RT</b> — RadioText, maximálně 64 znaků.</p>
-                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">RT FAJN RADIO - Always fresh</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">RT Ukazkova zprava RadioText</code></div>
                 <p><b>PI</b> — 16bitový hexadecimální identifikační kód stanice. V sestavení RBDS mohou být přijímány také odpovídající severoamerické volací značky.</p>
-                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PI 2335</code></div>
+                <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PI 1234</code></div>
                 <p><b>PTY</b> — typ programu (0–31); viz <a style="color: white;" href="#pty-codes">PTY kódy</a> níže. <b>PTYN</b> — rozšířený název typu programu, maximálně 8 znaků (pro vymazání použijte <code>PTYN -</code>).</p>
                 <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PTY 10</code></div>
                 <div class="codebox"><code style="overflow-wrap: anywhere; white-space: pre-wrap;">PTYN POP</code></div>
